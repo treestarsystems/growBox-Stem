@@ -1,0 +1,33 @@
+{
+  "name": "growbox-stem",
+  "version": "1.0.0",
+  "description": "Environmnetal (Stem) - Built to collect sensor data, distribute tasks, and present it to frontends.",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node server/index.js",
+    "dev"  : "nodemon server/index.js"
+  },
+  "author": "Michael Bogle <support@mjns.it>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjnshosting/GrowBox-Stem.git"
+  },
+  "keywords": [
+    "container",
+    "farm",
+    "microgreens",
+    "vertical farm"
+  ],
+  "bugs": {
+    "url": "https://github.com/mjnshosting/GrowBox-Stem/issues",
+    "email": "support@mjns.it"
+  },
+  "homepage": "http://thegrowboxproject.com",
+  "dependencies": {
+    "onoff": "^4.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}

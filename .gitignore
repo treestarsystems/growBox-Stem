@@ -1,0 +1,10 @@
+/dbs/*
+/trash
+*.swp
+*.save
+*.py
+/confs/growbox_variables.php*
+node_modules
+/server/public
+hardcopy.0
+screenlog.0

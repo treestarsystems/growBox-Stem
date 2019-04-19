@@ -1,2 +1,2 @@
 # GrowBox-Stem
-Control system for lighting, water pumps, and anything else that can be turned on via a relay or smart pdu. 
+Control system for environmental systems such as lighting, water pumps/dosing, and anything else. 
