@@ -1,15 +1,25 @@
 #!/usr/bin/env node
 //For GrowBox-Stem (Environment Controller)
-var argv = require('minimist')(process.argv.slice(2));
 const Gpio = require('onoff').Gpio;
-const relay = new Gpio(argv.gpio, 'out');
+var argv = require('minimist')(process.argv.slice(2));
 
-//Turning the realy on and off.
+//TurnNoting the realy on and off.
+
 //0 = On|Low /1 = Off|High
-if (argv.task == 'on') {
-	relay.writeSync(0);
-} else if (argv.task == 'off') {
-	relay.writeSync(1);
+if ((Number.isInteger(argv.gpio)) && (argv.gpio)) {
+	if (((argv.task == 'on') || (argv.task == 'off')) && (argv.task)) {
+//		console.log('In IF statement');
+		const relay = new Gpio(argv.gpio, 'out');
+		if (argv.task == 'on') {
+			relay.writeSync(0);
+		} else if (argv.task == 'off') {
+			relay.writeSync(1);
+		} else {
+			relay.unexport();
+		}
+	} else {
+		console.log('Please enter a valid --task on|off');
+	}
 } else {
-	relay.unexport();
+	console.log('Please enter a valid --gpio <GPIO.BMC> number');
 }
