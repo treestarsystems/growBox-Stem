@@ -14,6 +14,7 @@ if ((Number.isInteger(argv.gpio)) && (argv.gpio)) {
 			relay.writeSync(0);
 		} else if (argv.task == 'off') {
 			relay.writeSync(1);
+			relay.unexport();
 		} else {
 			relay.unexport();
 		}
