@@ -14,6 +14,7 @@ var totalCount = 0;
 var minutes = 0;
 //Must be gathered by running water through flow meter and timing the amount of time until full.
 var constant = 0.10;
+//Take current time, convert from miliseconds to seconds, take off decimals.
 var startTime = (Date.now()/1000).toFixed();
 var now = 0;
 
@@ -32,15 +33,13 @@ monitorWaterFlow();
 
 setInterval(
 	function () {
+		//Take current time, convert from miliseconds to seconds, take off decimals.
 		now = (Date.now()/1000).toFixed();
-/*
-		console.log(startTime);
-		console.log(now);
-		console.log((now - startTime));
-*/
-		//If the difference in time is divisible by 60 with no remainder.
-		if (((now - startTime) % 60) === 0) {
-			console.log((rateCount * constant).toFixed(2));
+		interval = 5;
+		//Run only if the difference in time is divisible by 60 with no remainder.
+		if (((now - startTime) % interval) === 0) {
+			console.log( 'Rate: ' + ((rateCount * constant).toFixed(2))/((now - startTime)/interval) + ' L/min');
+			console.log( 'Time: ' + ((now - startTime)/interval));
 		}
 	}, 1000);
 
