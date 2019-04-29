@@ -36,7 +36,7 @@ function displayWaterFlow () {
 	if (((now - startTime) % interval) === 0) {
 		console.log('Flow Rate: ' + ((rateCount * constant).toFixed(2)) + ' L/min');
 		console.log('Revolutions: ' + ((totalCount * constant).toFixed(2)));
-		console.log('Time: ' + ((now - startTime)/interval)) + 'mins';
+		console.log('Time: ' + (now - startTime)/interval + ' mins');
 		console.log();
 		rateCount = 0;
 	}
