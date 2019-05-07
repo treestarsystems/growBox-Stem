@@ -9,7 +9,7 @@ Action  -
 var fs  = require('fs');
 var tty = fs.createWriteStream('/dev/tty1');
 var os = require( 'os' );
-var projectName = 'GrowBox - Stem (Environmental Control System)';
+var projectName = 'growBox - Stem (Environmental Control System)';
 const disk = require('diskusage');
 let path = os.platform() === 'win32' ? 'c:' : '/';
 
@@ -46,6 +46,20 @@ function displaySystemStatus() {
 			);
 		}
 	}
+	tty.write(`\nTask Info:\n`);
+	tty.write(` -growBox - Root (Task Master):\n`);
+	tty.write(` --Name: root-1fPUas \n`);
+	tty.write(` --IP Address: 19.168.1.1 \n`);
+	tty.write(` --Last Communication: ${Date()}\n`);
+
+	tty.write(`\nCurrent Tasks:\n`);
+	tty.write(` -Water: Valve Open\n`);
+	tty.write(` -Light: On\n`);
+	tty.write(` -Air: On: Cooling to 72F\n`);
+
+	tty.write(`\nScheduled Tasks:\n`);
+	tty.write(` -Water: Irrigation - On - ${Date()}\n`);
+	tty.write(` -Light: Off - ${Date()}\n`);
 }
 
 //Run the code above every 10 secs
