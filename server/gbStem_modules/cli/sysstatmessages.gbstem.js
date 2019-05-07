@@ -46,6 +46,8 @@ function displaySystemStatus() {
 			);
 		}
 	}
+	//Added line until i figure out why undefined is being displayed.
+	tty.write(`\n`);
 	tty.write(`\nTask Info:\n`);
 	tty.write(` -growBox - Root (Task Master):\n`);
 	tty.write(` --Name: root-1fPUas \n`);
