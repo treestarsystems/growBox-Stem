@@ -9,12 +9,13 @@ Action  -
 var fs  = require('fs');
 var tty = fs.createWriteStream('/dev/tty1');
 var os = require( 'os' );
-var networkInterfaces = os.networkInterfaces();
 var projectName = 'GrowBox - Stem (Environmental Control System)';
 const disk = require('diskusage');
 let path = os.platform() === 'win32' ? 'c:' : '/';
 
 function displaySystemStatus() {
+	var networkInterfaces = os.networkInterfaces();
+
 	tty.write(`${projectName} \n\n`);
 	tty.write(`Current Time: ${Date()} \n`);
 	tty.write(`Hostname: ${os.hostname()} \n`);
@@ -35,7 +36,7 @@ function displaySystemStatus() {
 	for (const [key, value] of Object.entries(networkInterfaces)) {
 	i = 0;
 		if (key != 'lo') {
-			tty.write(` -Name:${key}: \n`);
+			tty.write(` -Name: ${key}: \n`);
 			tty.write(` --MAC: ${value[0]['mac']} \n`);
 			tty.write(`${value.forEach(
 				function(element) {
