@@ -15,9 +15,13 @@ let path = os.platform() === 'win32' ? 'c:' : '/';
 
 function displaySystemStatus() {
 	var networkInterfaces = os.networkInterfaces();
+	var timeOptions = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+	var today  = new Date();
+	//Variables like this will be retireved from task master then converted later on in the script.
+	var lcommDate = new Date(1556776971000);
 
 	tty.write(`${projectName} \n\n`);
-	tty.write(`Current Time: ${Date()} \n`);
+	tty.write(`Current Time: ${today.toLocaleDateString("en-US", timeOptions)} \n`);
 	tty.write(`Hostname: ${os.hostname()} \n`);
 	tty.write(`Uptime: ${(os.uptime()/60).toFixed()} Mins\n`);
 	tty.write(`Total Momory: ${(os.totalmem()/1000000).toFixed()} MBs\n`);
@@ -46,22 +50,23 @@ function displaySystemStatus() {
 			);
 		}
 	}
+
 	//Added line until i figure out why undefined is being displayed.
 	tty.write(`\n`);
 	tty.write(`\nTask Info:\n`);
 	tty.write(` -growBox - Root (Task Master):\n`);
 	tty.write(` --Name: root-1fPUas \n`);
 	tty.write(` --IP Address: 19.168.1.1 \n`);
-	tty.write(` --Last Communication: ${Date()}\n`);
+	tty.write(` --Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptions)} \n`);
 
 	tty.write(`\nCurrent Tasks:\n`);
-	tty.write(` -Water: Valve Open\n`);
+	tty.write(` -Water: Reservoir Valve Open\n`);
 	tty.write(` -Light: On\n`);
-	tty.write(` -Air: On: Cooling to 72F\n`);
+	tty.write(` -Air: On - Cooling to 72 F\n`);
 
 	tty.write(`\nScheduled Tasks:\n`);
-	tty.write(` -Water: Irrigation - On - ${Date()}\n`);
-	tty.write(` -Light: Off - ${Date()}\n`);
+	tty.write(` -Water: Irrigation - On - ${today.toLocaleDateString("en-US", timeOptions)} \n`);
+	tty.write(` -Light: Off - ${today.toLocaleDateString("en-US", timeOptions)} \n`);
 }
 
 //Run the code above every 10 secs
