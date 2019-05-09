@@ -4,6 +4,7 @@ For GrowBox-Stem (Environment Controller)
 Purpose - Output System Status Data to /dev/tty1:
 Inputs  -
 Action  -
+Status  - Developing / Incomplete
 */
 
 var fs  = require('fs');
