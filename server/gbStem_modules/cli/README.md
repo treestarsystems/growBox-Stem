@@ -8,16 +8,20 @@ These scripts can be ran from the cli to help troubleshoot issues or make quick 
 
 ## Options:
 #### readgpio.gbstem.js: 
-##### Reads Gpio pin's current state\n 
-* --gpio - Please enter a valid 
-* --gpio <GPIO.BMC> number 
-* Example: ./readgpio.gbstem.js --gpio 5
+**Reads Gpio pin's current state**
+* --gpio - Please enter a valid --gpio <GPIO.BMC> number 
+* Example: 
+...
+./readgpio.gbstem.js --gpio 5
+...
 
 #### relaycontrol.gbstem.js: 
-##### Change Gpio pin's current state. Mainly for relays. 
+**Change Gpio pin's current state. Mainly for relays.** 
 * --gpio - Please enter a valid --gpio <GPIO.BMC> number 
 * --task - Please enter a valid --task on|off 
-* Example: ./readgpio.gbstem.js --gpio 5 --task on
-
+* Example: 
+...
+./readgpio.gbstem.js --gpio 5 --task on
+...
 #### sysstatmessages.gbstem.js: 
-##### Write system status information to the main console window. /dev/tty1
+**Write system status information to the main console window. /dev/tty1**
