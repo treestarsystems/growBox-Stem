@@ -9,14 +9,14 @@ Modules that contain functions that can be imported for use.
 * Functions:
 ```
 temperatureConversion(temperature, scale)
-* Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
-* Returns: converted value (24000, 'c') - 24.000
+ Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
+ Returns: converted value (24000, 'c') - 24.000
 genRegular(x): Generate a random alphanumeric string
-* Takes: number - genRegular(5)
-* Returns: alphanumeric string - 5yA9w
+ Takes: number - genRegular(5)
+ Returns: alphanumeric string - 5yA9w
 getRandomNumber(min, max): Generate a random number within defined range
-* Takes: range number - getRandomNumber(5,10)
-* Returns: number - 3
+ Takes: range number - getRandomNumber(5,10)
+ Returns: number - 3
 ```
 
 #### gpio.gbstem.js: 
@@ -24,36 +24,34 @@ getRandomNumber(min, max): Generate a random number within defined range
 * Functions:
 ```
 readGpio (pin)
-* Takes:   - 
-* Returns:   - 
+ Takes:   - 
+ Returns:   - 
 writeGpio (pin)
-* Takes:   - 
-* Returns:   - 
+ Takes:   - 
+ Returns:   - 
 ```
 
 #### relay.gbstem.js: 
 **A collection of relay control functions**
 * Functions:
 ```
-* Takes:   - 
-* Returns:   - 
+ Takes:   - 
+ Returns:   - 
 ```
 
 #### sensor.gbstem.js: 
 **A collection of sensor data collection functions**
 * Functions:
-* Takes:   - 
-* Returns:   - 
 ```
-* Takes:   - 
-* Returns:   - 
+ Takes:   - 
+ Returns:   - 
 ```
 
 #### water.gbstem.js: 
 **A collection of water control functions**
 * Functions:
 ```
-* Takes:   - 
-* Returns:   - 
+ Takes:   - 
+ Returns:   - 
 ```
 
