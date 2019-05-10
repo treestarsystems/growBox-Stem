@@ -24,27 +24,52 @@ getRandomNumber(min, max): Generate a random number within defined range
 * Functions:
 ```
 readGpio (pin)
- Takes:   - 
- Returns:   - 
+ Takes: GPIO BMC Pin number - readGpio(5)
+ Returns: JSON object with success/error - Examples:
+	Success: { "status": {"code": "200", "codeType": "success", "message": "Completed", "reading": 0 or 1}}
+	Error: { "status": {"code": "500", "codeType": "error", "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"}}
 writeGpio (pin)
- Takes:   - 
- Returns:   - 
+ Takes:   - GPIO BMC Pin number - writeGpio(5)
+ Returns: JSON object with success/error - Examples:
+	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
+	  Note: You can run readGpio(5) again to get the value to see if it changed.
+	Error: {"status": {"code": "500", "codeType": "error", "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"}}
 ```
 
 #### relay.gbstem.js: 
 **A collection of relay control functions**
 * Functions:
 ```
- Takes:   - 
- Returns:   - 
+relayControl (pin, task)
+ Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
+ Returns: JSON object with success/error - Examples:
+	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
+	  Note: You can run readGpio(5) to get the value to see if it changed.
+	Error: {"status": {"code": "500", "codeType": "error", "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"}}
+	Error: {"status": {"code": "500", "codeType": "error", "message": "Please enter a valid Task - on|off"}}
 ```
 
 #### sensor.gbstem.js: 
 **A collection of sensor data collection functions**
 * Functions:
 ```
- Takes:   - 
- Returns:   - 
+readSensorSingle (sensorID)
+ Takes: Unique ID of sensor which can be found in /sys/bus/w1/devices/<device> - 
+	readSensorSingle (28-011830a09cff)
+		.then(console.log) <--- or whatever you want to do with the promise. 
+ Returns: JSON object with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
+	  millidegree celsius
+   Input:
+	bc 01 4b 46 7f ff 0c 10 a4 : crc=a4 YES
+	bc 01 4b 46 7f ff 0c 10 a4 t=27750
+   Result: 
+	Success: {"sensorID": {"reading": "27750"}}
+	Error: {"28-011830a39bffs": {"reading": {"error": "Error: ENOENT: no such file or directory, open '/sys/bus/w1/devices/28-011830a39bffs/w1_slave'"}}}
+
+readSensorAll ()
+ Takes: Nothing - readSensorAll () 
+ Returns: An array of JSON objects with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
+	  millidegree celsius
 ```
 
 #### water.gbstem.js: 
