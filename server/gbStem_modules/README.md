@@ -44,7 +44,7 @@ Modules that contain functions that can be imported for use.
 
 #### relay.gbstem.js: 
 **A collection of relay control functions**
-_Functions:_
+ _Functions:_
 ##### relayControl (pin, task)
 ```
  Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
