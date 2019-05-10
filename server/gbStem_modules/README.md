@@ -4,9 +4,9 @@ Modules that contain functions that can be imported for use.
 ## General Instructions:
 
 
-#### core.gbstem.js: 
+### core.gbstem.js: 
 **A collection of core functions**
-* Functions:
+#### Functions:
 ##### temperatureConversion(temperature, scale)
 ```
  Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
@@ -44,7 +44,7 @@ Modules that contain functions that can be imported for use.
 
 #### relay.gbstem.js: 
 **A collection of relay control functions**
- _Functions:_
+Functions:
 ##### relayControl (pin, task)
 ```
  Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
