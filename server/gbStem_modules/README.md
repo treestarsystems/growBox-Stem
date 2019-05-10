@@ -6,7 +6,9 @@ Modules that contain functions that can be imported for use.
 
 ### core.gbstem.js: 
 **A collection of core functions**
-#### Functions:
+
+Functions:
+
 ##### temperatureConversion(temperature, scale)
 ```
  Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
