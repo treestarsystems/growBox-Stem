@@ -6,9 +6,6 @@ Modules that contain functions that can be imported for use.
 
 ### core.gbstem.js: 
 **A collection of core functions**
-
-Functions:
-
 ##### temperatureConversion(temperature, scale)
 ```
  Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
@@ -27,7 +24,6 @@ Functions:
 
 #### gpio.gbstem.js: 
 **Read/Write from/to GPIO pin**
-* Functions:
 ##### readGpio (pin)
 ```
  Takes: GPIO BMC Pin number - readGpio(5)
@@ -46,7 +42,6 @@ Functions:
 
 #### relay.gbstem.js: 
 **A collection of relay control functions**
-Functions:
 ##### relayControl (pin, task)
 ```
  Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
@@ -59,7 +54,6 @@ Functions:
 
 #### sensor.gbstem.js: 
 **A collection of sensor data collection functions**
-* Functions:
 ##### readSensorSingle (sensorID)
 ```
  Takes: Unique ID of sensor which can be found in /sys/bus/w1/devices/<device> - 
@@ -83,7 +77,6 @@ Functions:
 
 #### water.gbstem.js: 
 **A collection of water control functions**
-* Functions:
 ##### functionname
 ```
  Takes:   - 
