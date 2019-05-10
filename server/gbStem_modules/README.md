@@ -7,14 +7,14 @@ Modules that contain functions that can be imported for use.
 ### core.gbstem.js: A collection of core functions
 ##### temperatureConversion(temperature, scale)
 ```
- Takes: temperature reading in millidegrees celcius (24000) and desired 
+ Takes: Temperature reading in millidegrees celcius (24000) and desired 
 	conversion ('c','f','k')- temperatureConversion(2400, 'c')
- Returns: converted value (24000, 'c') - 24.000
+ Returns: Converted value (24000, 'c') - 24.000
 ```
 ##### genRegular(x): Generate a random alphanumeric string
 ```
- Takes: number - genRegular(5)
- Returns: alphanumeric string - 5yA9w
+ Takes: Number - genRegular(5)
+ Returns: Alphanumeric string - 5yA9w
 ```
 ##### getRandomNumber(min, max): Generate a random number within defined range
 ```

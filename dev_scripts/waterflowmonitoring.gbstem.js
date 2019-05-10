@@ -4,18 +4,18 @@ Purpose - Measure the flow or liquid through a flow sensor.
 Inputs  -
 Action  -
 */
+const Gpio = require('onoff').Gpio;
 
-	var rateCount = 0;
-	var totalCount = 0;
-	var minutes = 0;
-	//Must be gathered by running water through flow meter and timing the amount of time until full.
-	var constant = 0.10;
-	//Take current time, convert from miliseconds to seconds, take off decimals.
-	var startTime = (Date.now()/1000).toFixed();
-	var now = 0;
+var rateCount = 0;
+var totalCount = 0;
+var minutes = 0;
+//Must be gathered by running water through flow meter and timing the amount of time until full.
+var constant = 0.10;
+//Take current time, convert from miliseconds to seconds, take off decimals.
+var startTime = (Date.now()/1000).toFixed();
+var now = 0;
 
 function monitorWaterFlow(pin) {
-	const Gpio = require('onoff').Gpio;
 	//Define the GPIO pin(s) to watch, control, and necessary options
 	const flowSensor = new Gpio(pin, 'in', 'falling');
 
@@ -49,5 +49,6 @@ monitorWaterFlow(27);
 setInterval(displayWaterFlow, 1000);
 
 process.on('SIGINT', () => {
+	const flowSensor = new Gpio(pin, 'in', 'falling');
 	flowSensor.unexport();
 });

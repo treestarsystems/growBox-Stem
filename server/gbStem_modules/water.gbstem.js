@@ -3,6 +3,9 @@ For GrowBox-Stem (Environment Controller)
 Purpose - A collection of water control functions
 Inputs  -
 Action  -
+
+NOT READY FOR USE
+
 */
 
 const Gpio = require('onoff').Gpio;
@@ -30,6 +33,15 @@ function monitorWaterFlow(pin) {
 	});
 	return waterFlowReading;
 }
+
+//Test execution
+/*
+setInterval(
+	function () {
+		console.log(monitorWaterFlow(0));
+	}
+, 1000);
+*/
 
 module.exports = {
 	monitorWaterFlow
