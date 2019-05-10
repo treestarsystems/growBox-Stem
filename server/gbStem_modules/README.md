@@ -12,12 +12,12 @@ Modules that contain functions that can be imported for use.
  Takes: temperature reading in millidegrees celcius (24000) and desired conversion ('c','f','k')- temperatureConversion(2400, 'c')
  Returns: converted value (24000, 'c') - 24.000
 ```
-**genRegular(x): Generate a random alphanumeric string
+##### genRegular(x): Generate a random alphanumeric string
 ```
  Takes: number - genRegular(5)
  Returns: alphanumeric string - 5yA9w
 ```
-**getRandomNumber(min, max): Generate a random number within defined range
+##### getRandomNumber(min, max): Generate a random number within defined range
 ```
  Takes: range number - getRandomNumber(5,10)
  Returns: number - 3
@@ -26,13 +26,15 @@ Modules that contain functions that can be imported for use.
 #### gpio.gbstem.js: 
 **Read/Write from/to GPIO pin**
 * Functions:
+##### readGpio (pin)
 ```
-readGpio (pin)
  Takes: GPIO BMC Pin number - readGpio(5)
  Returns: JSON object with success/error - Examples:
 	Success: { "status": {"code": "200", "codeType": "success", "message": "Completed", "reading": 0 or 1}}
 	Error: { "status": {"code": "500", "codeType": "error", "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"}}
-writeGpio (pin)
+```
+##### writeGpio (pin)
+```
  Takes:   - GPIO BMC Pin number - writeGpio(5)
  Returns: JSON object with success/error - Examples:
 	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
@@ -43,8 +45,8 @@ writeGpio (pin)
 #### relay.gbstem.js: 
 **A collection of relay control functions**
 * Functions:
+##### relayControl (pin, task)
 ```
-relayControl (pin, task)
  Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
  Returns: JSON object with success/error - Examples:
 	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
@@ -56,8 +58,8 @@ relayControl (pin, task)
 #### sensor.gbstem.js: 
 **A collection of sensor data collection functions**
 * Functions:
+##### readSensorSingle (sensorID)
 ```
-readSensorSingle (sensorID)
  Takes: Unique ID of sensor which can be found in /sys/bus/w1/devices/<device> - 
 	readSensorSingle (28-011830a09cff)
 		.then(console.log) <--- or whatever you want to do with the promise. 
@@ -69,8 +71,9 @@ readSensorSingle (sensorID)
    Result: 
 	Success: {"sensorID": {"reading": "27750"}}
 	Error: {"28-011830a39bffs": {"reading": {"error": "Error: ENOENT: no such file or directory, open '/sys/bus/w1/devices/28-011830a39bffs/w1_slave'"}}}
-
-readSensorAll ()
+```
+##### readSensorAll ()
+```
  Takes: Nothing - readSensorAll () 
  Returns: An array of JSON objects with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
 	  millidegree celsius
@@ -79,6 +82,7 @@ readSensorAll ()
 #### water.gbstem.js: 
 **A collection of water control functions**
 * Functions:
+##### functionname
 ```
  Takes:   - 
  Returns:   - 
