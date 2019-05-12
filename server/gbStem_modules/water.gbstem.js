@@ -4,7 +4,7 @@ Purpose - A collection of water control functions
 Inputs  -
 Action  -
 
-NOT READY FOR USE
+ALMOST READY FOR USE
 
 */
 
@@ -13,35 +13,35 @@ const Gpio = require('onoff').Gpio;
 //For waterflow monitoring
 var rateCount = 0;
 var totalCount = 0;
-var minutes = 0;
 var constant = 0.10;
 var startTime = (Date.now()/1000).toFixed();
 var now = 0;
 var interval = 60;
+minute = 0;
 
 function monitorWaterFlow(pin) {
-	now = (Date.now()/1000).toFixed();
-	interval = 60;
 	const flowSensor = new Gpio(pin, 'in', 'falling');
-	var waterFlowReading = `{"constant": ${constant}, "startTime": ${startTime}, "now": ${now}, "rateCount": ${rateCount}, "totalCount": ${totalCount}, "flowRate": ${(rateCount * constant).toFixed(2)}, "revolutions": ${(rateCount * constant).toFixed(2)}, "time": ${(now - startTime)/interval}}`;
 	flowSensor.watch((err, value) => {
 		if (err) {
 			throw err;
 		}
 		rateCount++;
 		totalCount++;
+		var now = (Date.now()/1000).toFixed();
+		var waterFlowReading = `{"constant": ${constant}, "startTime": ${startTime}, "now": ${now}, "rateCount": ${rateCount}, "totalCount": ${totalCount}, "flowRate": ${((rateCount * constant)/interval).toFixed(2)}, "time": ${minute}}`;
+	//	return waterFlowReading;
+		console.log(waterFlowReading);
 	});
-	return waterFlowReading;
+	//Reset rateCount and increment minute every 60 seconds
+	setInterval(function(){
+		minute++;
+		rateCount = 0;
+	}, 60000);
+
 }
 
 //Test execution
-/*
-setInterval(
-	function () {
-		console.log(monitorWaterFlow(0));
-	}
-, 1000);
-*/
+//monitorWaterFlow(17);
 
 module.exports = {
 	monitorWaterFlow
