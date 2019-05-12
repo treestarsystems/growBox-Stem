@@ -3,9 +3,7 @@ For GrowBox-Stem (Environment Controller)
 Purpose - A collection of water control functions
 Inputs  -
 Action  -
-
 ALMOST READY FOR USE
-
 */
 
 const Gpio = require('onoff').Gpio;
@@ -18,6 +16,7 @@ var startTime = (Date.now()/1000).toFixed();
 var now = 0;
 var interval = 60;
 minute = 0;
+var waterFlowReading = '';
 
 function monitorWaterFlow(pin) {
 	const flowSensor = new Gpio(pin, 'in', 'falling');
@@ -28,20 +27,22 @@ function monitorWaterFlow(pin) {
 		rateCount++;
 		totalCount++;
 		var now = (Date.now()/1000).toFixed();
-		var waterFlowReading = `{"constant": ${constant}, "startTime": ${startTime}, "now": ${now}, "rateCount": ${rateCount}, "totalCount": ${totalCount}, "flowRate": ${((rateCount * constant)/interval).toFixed(2)}, "time": ${minute}}`;
-	//	return waterFlowReading;
-		console.log(waterFlowReading);
+		waterFlowReading = `{"constant": ${constant}, "startTime": ${startTime}, "now": ${now}, "rateCount": ${rateCount}, "totalCount": ${totalCount}, "flowRate": ${((rateCount * constant)/interval).toFixed(2)}, "time": ${minute}}`;
 	});
 	//Reset rateCount and increment minute every 60 seconds
 	setInterval(function(){
 		minute++;
 		rateCount = 0;
 	}, 60000);
-
 }
 
 //Test execution
-//monitorWaterFlow(17);
+monitorWaterFlow(17);
+
+//Get updated value
+setInterval (function(){
+	console.log(waterFlowReading)
+}, 1000);
 
 module.exports = {
 	monitorWaterFlow
