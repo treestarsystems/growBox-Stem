@@ -16,9 +16,9 @@ var startTime = (Date.now()/1000).toFixed();
 var now = 0;
 var interval = 60;
 minute = 0;
-var waterFlowReading = '';
+var waterFlowReading = 'test-glb-water';
 
-function monitorWaterFlow(pin) {
+function monitorWaterFlow(pin, log, file) {
 	const flowSensor = new Gpio(pin, 'in', 'falling');
 	flowSensor.watch((err, value) => {
 		if (err) {
@@ -28,21 +28,25 @@ function monitorWaterFlow(pin) {
 		totalCount++;
 		var now = (Date.now()/1000).toFixed();
 		waterFlowReading = `{"constant": ${constant}, "startTime": ${startTime}, "now": ${now}, "rateCount": ${rateCount}, "totalCount": ${totalCount}, "flowRate": ${((rateCount * constant)/interval).toFixed(2)}, "time": ${minute}}`;
+		//Outputs to console for CLI script
+		if (log == 'on') {
+			console.log(waterFlowReading)
+		}
+		if (file) {
+			console.log('file is not null')
+		}
 	});
+
 	//Reset rateCount and increment minute every 60 seconds
 	setInterval(function(){
 		minute++;
 		rateCount = 0;
 	}, 60000);
+//	return waterFlowReading;
 }
 
-//Test execution
-monitorWaterFlow(17);
-
-//Get updated value
-setInterval (function(){
-	console.log(waterFlowReading)
-}, 1000);
+//The only way I think this will work is if the data outputs to a file then I read that file.
+//Execution would look like water.monitorWaterFlow(argv.gpio, file_name)
 
 module.exports = {
 	monitorWaterFlow
