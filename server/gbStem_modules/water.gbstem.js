@@ -1,9 +1,8 @@
 /*
-For GrowBox-Stem (Environment Controller)
+For growBox-Stem (Environment Controller)
 Purpose - A collection of water control functions
 Inputs  -
 Action  -
-ALMOST READY FOR USE
 */
 
 const Gpio = require('onoff').Gpio;

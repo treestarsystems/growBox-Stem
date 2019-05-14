@@ -65,7 +65,7 @@ Modules that contain functions that can be imported for use.
 	Success: {"sensorID": {"reading": "27750"}}
 	Error: {"28-011830a39bffs": {"reading": {"error": "Error: ENOENT: no such file or directory, open '/sys/bus/w1/devices/28-011830a39bffs/w1_slave'"}}}
 ```
-##### readSensorAll ()
+##### INCOMPLETE - readSensorAll ()
 ```
  Takes: Nothing - readSensorAll () 
  Returns: An array of JSON objects with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
@@ -73,9 +73,31 @@ Modules that contain functions that can be imported for use.
 ```
 
 #### water.gbstem.js: A collection of water control functions
-##### functionname
+##### monitorWaterFlow(pin,cli,file)
 ```
- Takes:   - 
- Returns:   - 
+ Takes: 
+  --gpio <GPIO BMC Pin number> - mandatory 
+  --cli 1 - optional and only takes effect if value is 1 - outputs JSON obj to console 
+  --file <path to file> - optionla must be a valid and writable path to output JSON obj  
+ Returns:  Writes JSON content to file and/or console. (Wish I didnt have to do this but my current skills/knowledge is limited)
+ Example:
+	Call: basic call in js file
+	water.monitorWaterFlow(18,1,./output.json)
+
+	Module: see cli script [waterflowmonitor.gbstem.js](https://github.com/mjnshosting/growBox-Stem/blob/master/server/gbStem_modules/cli/waterflowmonitor.gbstem.js)
+	const water = require('../water.gbstem.js');
+	if ((Number.isInteger(argv.gpio)) && (argv.gpio)) {
+		water.monitorWaterFlow(argv.gpio,argv.cli,argv.file);
+	} else {
+		console.log('Please enter a valid --gpio <GPIO.BMC> number');
+	}
+ Output:
+	{ constant: 0.1,
+	startTime: '1557815480',
+	now: '1557815481',
+	rateCount: 64,
+	totalCount: 64,
+	flowRate: '0.11',
+	time: 0 }
 ```
 
