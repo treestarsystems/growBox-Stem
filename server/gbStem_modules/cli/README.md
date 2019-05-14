@@ -27,7 +27,7 @@ Example:
 ```
 
 #### sysstatmessages.gbstem.js: 
-Write system status information to the main console window. /dev/tty1
+**Write system status information to the main console window. /dev/tty1**
 
 Example:
 ```
