@@ -10,6 +10,7 @@ These scripts can be ran from the cli to help troubleshoot issues or make quick 
 #### readgpio.gbstem.js: 
 **Reads Gpio pin's current state**
 * --gpio - Please enter a valid --gpio <GPIO.BMC> number 
+
 Example: 
 ```
 ./readgpio.gbstem.js --gpio 5
@@ -19,6 +20,7 @@ Example:
 **Change Gpio pin's current state. Mainly for relays.** 
 * --gpio - Please enter a valid --gpio <GPIO.BMC> number 
 * --task - Please enter a valid --task on|off 
+
 Example: 
 ```
 ./readgpio.gbstem.js --gpio 5 --task on
@@ -26,6 +28,7 @@ Example:
 
 #### sysstatmessages.gbstem.js: 
 Write system status information to the main console window. /dev/tty1
+
 Example:
 ```
 ./sysstatmessages.gbstem.js --gpio 18 --cli 1 --file ./reading.json
@@ -76,6 +79,7 @@ Scheduled Tasks:
 * --cli 1 - optional and only takes effect if value is 1 - outputs JSON obj to console
 * --file <path to file> - optionla must be a valid and writable path to output JSON obj
  Returns:  Writes JSON content to file and/or console. (Wish I didnt have to do this but my current skills/knowledge is limited)
+
 Example:
 ```
 ./waterflowmonitor.gbstem.js --gpio 18 --cli 1 --file ./reading.json
