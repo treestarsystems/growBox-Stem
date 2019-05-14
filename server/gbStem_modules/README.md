@@ -82,7 +82,7 @@ Modules that contain functions that can be imported for use.
  Returns:  Writes JSON content to file and/or console. (Wish I didnt have to do this but my current skills/knowledge is limited)
  Example:
 	Call: basic call in js file
-	__water.monitorWaterFlow(18,1,./output.json);__
+	water.monitorWaterFlow(18,1,./output.json);
 
 	Module: see cli script [waterflowmonitor.gbstem.js](https://github.com/mjnshosting/growBox-Stem/blob/master/server/gbStem_modules/cli/waterflowmonitor.gbstem.js)
 	const water = require('../water.gbstem.js');
