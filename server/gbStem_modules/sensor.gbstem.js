@@ -19,7 +19,7 @@ function processData(sensorID, data) {
 
 	//Get last value in array and remove the preceding t= from output using substring.
 	var sensorTemperatureReadingRaw = sensorDataArray[sensorDataArray.length-1].substring(2);
-	var sensorTemperatureReadingParsed = `{"${sensorID}": {"reading": ${(sensorDataArray[sensorDataArray.length-1].substring(2))}}}`;
+	var sensorTemperatureReadingParsed = {[sensorID]:{"reading": (sensorDataArray[sensorDataArray.length-1].substring(2))}};
 	return sensorTemperatureReadingParsed;
 };
 
@@ -30,7 +30,7 @@ async function readSensorSingle (sensorID) {
 	        return processData(sensorID, text);
     	}
     	catch (err) {
-        	return `{"${sensorID}": {"reading": {"error": "${err}"}}}`;
+        	return {[sensorID]: {"reading": {"error": JSON.stringify(err)}}};
     	}
 }
 

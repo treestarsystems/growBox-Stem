@@ -30,9 +30,9 @@ Modules that contain functions that can be imported for use.
 	Success: { "status": {"code": "200", "codeType": "success", "message": "Completed", "reading": 0 or 1}}
 	Error: { "status": {"code": "500", "codeType": "error", "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"}}
 ```
-##### writeGpio (pin)
+##### writeGpio (pin,value)
 ```
- Takes:   - GPIO BMC Pin number - writeGpio(5)
+ Takes:   - GPIO BMC Pin number and value (0 = On|Low/1 = Off|High) - writeGpio(5,1)
  Returns: JSON object with success/error - Examples:
 	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
 	  Note: You can run readGpio(5) again to get the value to see if it changed.
