@@ -6,7 +6,7 @@ These scripts can be ran from the cli to help troubleshoot issues or make quick 
 2. run using ./<script name>
 
 
-## Options:
+## CLI Scripts:
 #### readgpio.gbstem.js: 
 **Reads Gpio pin's current state**
 * --gpio - Please enter a valid --gpio <GPIO.BMC> number 
