@@ -74,9 +74,8 @@ Scheduled Tasks:
 ```
 
 #### waterflowmonitor.gbstem.js:
-**CLI script to monitor water flow.**
-**Writes JSON content to file and/or console.**
-##### (Wish I didnt have to do this but my current skills/knowledge is limited)
+**CLI script to monitor water flow and writes JSON content to file and/or console.**
+##### (Wish I didnt have to write to a file but my current skills/knowledge is limited)
 * --gpio \<GPIO BMC Pin number\> - required
 * --cli 1 - optional and only takes effect if value is 1 - outputs JSON obj to console
 * --file \<path to file\> - optionla must be a valid and writable path to output JSON obj
