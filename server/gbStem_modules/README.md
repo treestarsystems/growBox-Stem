@@ -76,18 +76,18 @@ Modules that contain functions that can be imported for use.
 ##### monitorWaterFlow(pin,cli,file)
 ```
  Takes: 
-  --gpio <GPIO BMC Pin number> - mandatory 
-  --cli 1 - optional and only takes effect if value is 1 - outputs JSON obj to console 
-  --file <path to file> - optionla must be a valid and writable path to output JSON obj  
+  pin -  <GPIO BMC Pin number> - required 
+  cli - 1 - optional and only takes effect if value is 1 - outputs JSON obj to console 
+  file - <path to file> - optionla must be a valid and writable path to output JSON obj  
  Returns:  Writes JSON content to file and/or console. (Wish I didnt have to do this but my current skills/knowledge is limited)
  Example:
 	Call: basic call in js file
-	water.monitorWaterFlow(18,1,./output.json)
+	**water.monitorWaterFlow(18,1,./output.json);**
 
 	Module: see cli script [waterflowmonitor.gbstem.js](https://github.com/mjnshosting/growBox-Stem/blob/master/server/gbStem_modules/cli/waterflowmonitor.gbstem.js)
 	const water = require('../water.gbstem.js');
 	if ((Number.isInteger(argv.gpio)) && (argv.gpio)) {
-		water.monitorWaterFlow(argv.gpio,argv.cli,argv.file);
+		**water.monitorWaterFlow(argv.gpio,argv.cli,argv.file);**
 	} else {
 		console.log('Please enter a valid --gpio <GPIO.BMC> number');
 	}
