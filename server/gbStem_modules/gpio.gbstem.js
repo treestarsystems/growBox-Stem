@@ -26,7 +26,6 @@ function writeGpio (pin,value) {
         	const gpio = new Gpio(pin, 'out');
 		gpio.writeSync(value)
 		var validRequest = {"status": {"code": "200", "codeType": "success", "message": "Completed"}};
-		console.log(validRequest);
 		return validRequest;
 	} else {
         	return invalidGpio;

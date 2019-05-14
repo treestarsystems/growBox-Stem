@@ -32,7 +32,7 @@ Modules that contain functions that can be imported for use.
 ```
 ##### writeGpio (pin,value)
 ```
- Takes:   - GPIO BMC Pin number and value (0 = On|Low/1 = Off|High) - writeGpio(5,1)
+ Takes: GPIO BMC Pin number and value (0 = On|Low/1 = Off|High) - writeGpio(5,1)
  Returns: JSON object with success/error - Examples:
 	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
 	  Note: You can run readGpio(5) again to get the value to see if it changed.
@@ -42,7 +42,7 @@ Modules that contain functions that can be imported for use.
 #### relay.gbstem.js: A collection of relay control functions
 ##### relayControl (pin, task)
 ```
- Takes:   - GPIO BMC Pin number - relayControl (5, 'on'|'off')
+ Takes: GPIO BMC Pin number - relayControl (5, 'on'|'off')
  Returns: JSON object with success/error - Examples:
 	Success: {"status": {"code": "200", "codeType": "success", "message": "Completed"}}
 	  Note: You can run readGpio(5) to get the value to see if it changed.
