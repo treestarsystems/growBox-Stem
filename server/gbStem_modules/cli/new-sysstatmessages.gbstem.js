@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /*
 For growBox-Stem (Environment Controller)
-Purpose - Output System Status Data to /dev/tty1:
+Purpose - Output System Status Data to /dev/tty1 while 
+	  sending/receiving info to growBox-Root server.
 Inputs  -
 Action  -
 Status  - Developing / Incomplete
