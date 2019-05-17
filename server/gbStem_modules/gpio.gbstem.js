@@ -12,7 +12,16 @@ function readGpio (pin) {
 
 	if ((Number.isInteger(pin)) && (pin)) {
         	const gpio = new Gpio(pin, 'out');
-		var validRequest = {"status": {"code": "200", "codeType": "success", "message": "Completed", "reading": gpio.readSync()}};
+		const result = () => {
+			gpio.read()
+				.then(function (value) {
+					return value;
+				})
+				.catch(err => console.log);
+		};
+
+		var validRequest = {"status": {"code": "200", "codeType": "success", "message": "Completed", "reading": result()}};
+		console.log(validRequest);
 		return validRequest;
 	} else {
         	return invalidGpio;
@@ -34,9 +43,9 @@ function writeGpio (pin,value) {
 
 //Test execution. Must readd console.log lines before return values.
 /*
-readGpio(5);
 writeGpio(5,1);
 */
+readGpio(5);
 
 module.exports = {
 	readGpio,
