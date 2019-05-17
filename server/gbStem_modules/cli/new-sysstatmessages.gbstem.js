@@ -11,8 +11,9 @@ Status  - Developing / Incomplete
 var os = require( 'os' );
 var projectName = 'growBox - Stem (Environmental Control System)';
 const disk = require('diskusage');
-var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
 var timeOptions = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+//This should be retrieved from a local database. I think SQLite
+var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
 
 //Example of converting time to human readable string
 //var today  = new Date();
