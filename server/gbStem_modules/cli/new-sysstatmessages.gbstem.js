@@ -20,6 +20,27 @@ var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
 //"currentTime": today.toLocaleDateString("en-US", timeOptions);
 
 //Collect Disk Data
+function collectSystemStatusLocal() {
+	var now  = Date.now();
+	var nowHuman  = new Date(now);
+	var collectedDataLocalDisks = collectSystemStatusDisks(paths);
+	var collectedDataLocalInterfaces = collectSystemStatusInterfaces(os.networkInterfaces());
+	var collectedDataLocal = {"currentTime": Date.now(),
+				"currentTimeHuman": nowHuman.toLocaleDateString("en-US", timeOptions),
+				"systemOS": os.type() + " " + os.release() + " " + os.arch(),
+				//Gets 1 min load average
+				"systemLoad": (os.loadavg()[0]).toFixed(2),
+				"hostName": os.hostname(),
+				"upTime": (os.uptime()/60).toFixed(),
+				"memoryFree": (os.freemem()/1000000).toFixed(),
+				"memoryTotal": (os.totalmem()/1000000).toFixed(),
+				"disks": collectedDataLocalDisks,
+				"networkInterfaces": collectedDataLocalInterfaces
+	}
+
+	return collectedDataLocal;
+}
+
 function collectSystemStatusDisks(paths) {
 	var collectedDataLocalDiskData = {};
 	var i = 0;
@@ -98,24 +119,14 @@ function collectSystemStatusTasksScheduled(limit) {
 
 //Put it all together
 function aggregateSystemStatus() {
-	var now  = Date.now();
-	var nowHuman  = new Date(now);
-	var lcommDate = new Date(1556776971000);
-	var collectedDataLocalDisks = collectSystemStatusDisks(paths);
-	var collectedDataLocalInterfaces = collectSystemStatusInterfaces(os.networkInterfaces());
+	var collectedDataLocalSystem = collectSystemStatusLocal();
 	var collectedDataLocalRelays = collectSystemStatusRelays();
 	var collectedDataRemoteTasksCurrent = collectSystemStatusTasksCurrent(4);
 	var collectedDataRemoteTasksScheduled = collectSystemStatusTasksScheduled(4);
 
 	var collectedDataRemote = 0;
-	var collectedDataLocal = {"projectName": projectName,
-				"currentTime": Date.now(),
-				"currentTimeHuman": nowHuman.toLocaleDateString("en-US", timeOptions),
-				"hostName": os.hostname(),
-				"upTime": (os.uptime()/60).toFixed(),
-				"totalMemory": (os.totalmem()/1000000).toFixed(),
-				"disks": collectedDataLocalDisks,
-				"networkInterfaces": collectedDataLocalInterfaces,
+	var collectedData = {"projectName": projectName,
+				"system": collectedDataLocalSystem,
 				"relays": collectedDataLocalRelays,
 				"tasksCurrent": collectedDataRemoteTasksCurrent,
 				"tasksScheduled": collectedDataRemoteTasksScheduled
@@ -139,8 +150,8 @@ function aggregateSystemStatus() {
 	 --Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptions)} `);
 */
 
-	console.log(collectedDataLocal);
-	return JSON.stringify(collectedDataLocal);
+	console.log(collectedData);
+	return JSON.stringify(collectedData);
 } 
 
 //Sends locally collected data to the growBox-Root
