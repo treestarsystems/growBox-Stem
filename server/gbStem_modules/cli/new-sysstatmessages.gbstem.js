@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
 For growBox-Stem (Environment Controller)
-Purpose - Output System Status Data to /dev/tty1 while 
+Purpose - Output System Status Data to /dev/tty1 while
 	  sending/receiving info to growBox-Root server.
 Inputs  -
 Action  -
@@ -47,9 +47,9 @@ function collectSystemStatusInterfaces(ints) {
 		var i = 0;
 		if (key != 'lo') {
 			collectedDataLocalNetwork[key] = {"interfaceMac": value[0]['mac']};
-			collectedDataLocalNetwork[key]["address"] = {};
+			collectedDataLocalNetwork[key]["address"] = [];
 			value.forEach(function(interface) {
-				collectedDataLocalNetwork[key]["address"][i] = interface['cidr'];
+				collectedDataLocalNetwork[key]["address"].push(interface['cidr']);
 				i++;
 			})
 		}
@@ -60,37 +60,40 @@ function collectSystemStatusInterfaces(ints) {
 //Collect Relay Data
 //This should be retrieved from a local database. I think SQLite
 function collectSystemStatusRelays() {
-	var collectedDataLocalRelayData = {};	
-	var i = 0;
-	while (i < 8) {
-		collectedDataLocalRelayData[i] = ["pin","status","description"];
+	var collectedDataLocalRelayData = {};
+	var i = 1;
+	while (i <= 8) {
+		collectedDataLocalRelayData[i] = {"pin": "value","status": "value","description": "value"};
 		i++;
 	}
-	return collectedDataLocalRelayData;	
+	return collectedDataLocalRelayData;
 }
 
 //Collect Current Task(s) Info from growBox-Root
+//Takes limit which is the amount of records you want returned or shown.
 //async - This will be async
-function collectSystemStatusTasksCurrent() {
-	var collectedDataRemoteTasksInfo = {};	
+
+function collectSystemStatusTasksCurrent(limit) {
+	var collectedDataRemoteTasksInfo = {};
 	var i = 0;
-	while (i < 8) {
-		collectedDataRemoteTasksInfo[i] = ["type","status","description","startTime","endTime"];
+	while (i < limit) {
+		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "value","endTime": "value"};
 		i++;
 	}
-	return collectedDataRemoteTasksInfo;	
+	return collectedDataRemoteTasksInfo;
 }
 
 //Collect Scheduled Task(s) Info from growBox-Root
+//Takes limit which is the amount of records you want returned or shown.
 //async - This will be async
-function collectSystemStatusTasksScheduled() {
-	var collectedDataRemoteTasksInfo = {};	
+function collectSystemStatusTasksScheduled(limit) {
+	var collectedDataRemoteTasksInfo = {};
 	var i = 0;
-	while (i < 8) {
-		collectedDataRemoteTasksInfo[i] = ["type","status","description","startTime","endTime"];
+	while (i < limit) {
+		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "value","endTime": "value"};
 		i++;
 	}
-	return collectedDataRemoteTasksInfo;	
+	return collectedDataRemoteTasksInfo;
 }
 
 //Put it all together
@@ -101,8 +104,8 @@ function aggregateSystemStatus() {
 	var collectedDataLocalDisks = collectSystemStatusDisks(paths);
 	var collectedDataLocalInterfaces = collectSystemStatusInterfaces(os.networkInterfaces());
 	var collectedDataLocalRelays = collectSystemStatusRelays();
-	var collectedDataRemoteTasksCurrent = collectSystemStatusTasksCurrent();
-	var collectedDataRemoteTasksScheduled = collectSystemStatusTasksScheduled();
+	var collectedDataRemoteTasksCurrent = collectSystemStatusTasksCurrent(4);
+	var collectedDataRemoteTasksScheduled = collectSystemStatusTasksScheduled(4);
 
 	var collectedDataRemote = 0;
 	var collectedDataLocal = {"projectName": projectName,
@@ -139,6 +142,11 @@ function aggregateSystemStatus() {
 	console.log(collectedDataLocal);
 	return JSON.stringify(collectedDataLocal);
 } 
+
+//Sends locally collected data to the growBox-Root
+function sendCollectedData() {
+
+}
 
 function displaySystemStatus() {
 	var networkInterfaces = os.networkInterfaces();
