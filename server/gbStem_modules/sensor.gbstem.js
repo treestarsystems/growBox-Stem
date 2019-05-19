@@ -40,7 +40,7 @@ function readSensorAllDS18B20 () {
 
 //Test execution using Promise.prototype.then() to return a promise
 /*
-readSensorSingle('28-011830a39bff')
+readSensorSingleDS18B20('28-011830a39bff')
 	.then(console.log)
 */
 

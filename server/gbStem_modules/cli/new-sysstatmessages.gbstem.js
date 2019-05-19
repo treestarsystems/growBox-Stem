@@ -8,9 +8,10 @@ Action  -
 Status  - Developing / Incomplete
 */
 
-var os = require( 'os' );
-var projectName = 'growBox - Stem (Environmental Control System)';
+const os = require( 'os' );
 const disk = require('diskusage');
+const sensor = require('../sensor.gbstem.js');
+var projectName = 'growBox - Stem (Environmental Control System)';
 var timeOptions = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
 //This should be retrieved from a local database. I think SQLite
 var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
@@ -20,16 +21,18 @@ var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
 //"currentTime": today.toLocaleDateString("en-US", timeOptions);
 
 //Collect Disk Data
-function collectSystemStatusLocal() {
+async function collectSystemStatusLocal() {
 	var now  = Date.now();
 	var nowHuman  = new Date(now);
 	var collectedDataLocalDisks = collectSystemStatusDisks(paths);
 	var collectedDataLocalInterfaces = collectSystemStatusInterfaces(os.networkInterfaces());
+	var internalCaseTemperature = await sensor.readSensorSingleDS18B20('28-011830a39bff');
 	var collectedDataLocal = {"currentTime": Date.now(),
 				"currentTimeHuman": nowHuman.toLocaleDateString("en-US", timeOptions),
 				"systemOS": os.type() + " " + os.release() + " " + os.arch(),
 				//Gets 1 min load average
 				"systemLoad": (os.loadavg()[0]).toFixed(2),
+				"caseTemperature": internalCaseTemperature,
 				"hostName": os.hostname(),
 				"upTime": (os.uptime()/60).toFixed(),
 				"memoryFree": (os.freemem()/1000000).toFixed(),
@@ -37,7 +40,6 @@ function collectSystemStatusLocal() {
 				"disks": collectedDataLocalDisks,
 				"networkInterfaces": collectedDataLocalInterfaces
 	}
-
 	return collectedDataLocal;
 }
 
@@ -118,8 +120,8 @@ function collectSystemStatusTasksScheduled(limit) {
 }
 
 //Put it all together
-function aggregateSystemStatus() {
-	var collectedDataLocalSystem = collectSystemStatusLocal();
+async function aggregateSystemStatus() {
+	var collectedDataLocalSystem = await collectSystemStatusLocal()
 	var collectedDataLocalRelays = collectSystemStatusRelays();
 	var collectedDataRemoteTasksCurrent = collectSystemStatusTasksCurrent(4);
 	var collectedDataRemoteTasksScheduled = collectSystemStatusTasksScheduled(4);
@@ -150,83 +152,31 @@ function aggregateSystemStatus() {
 	 --Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptions)} `);
 */
 
-	console.log(collectedData);
-	return JSON.stringify(collectedData);
-} 
+	return collectedData;
+}
 
 //Sends locally collected data to the growBox-Root
 function sendCollectedData() {
 
 }
 
+
 function displaySystemStatus() {
-	var networkInterfaces = os.networkInterfaces();
-	var timeOptions = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
-	var today  = new Date();
-	var lcommDate = new Date(1556776971000);
 
-	console.log(`${projectName} \n`);
-	console.log(`Current Time: ${today.toLocaleDateString("en-US", timeOptions)} `);
-	console.log(`Hostname: ${os.hostname()} `);
-	console.log(`Uptime: ${(os.uptime()/60).toFixed()} Mins`);
-	console.log(`Total Momory: ${(os.totalmem()/1000000).toFixed()} MBs`);
-	console.log(`\nDisk Usage: `);
-	disk.check(path, function(err, info) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log(` -Path: ${path} `);
-			console.log(` --Free: ${(info.available/1024000000).toFixed(2)} GBs`);
-			console.log(` --Total: ${(info.free/1024000000).toFixed(2)} GBs`);
-			console.log(` --Used: ${(100-((info.available/info.free)).toFixed(2)*100)}%`);
-		}
-	});
-	console.log(`\nNetwork Interface Information:`);
-	for (const [key, value] of Object.entries(networkInterfaces)) {
-	i = 0;
-		if (key != 'lo') {
-			console.log(` -Name: ${key}: `);
-			console.log(` --MAC: ${value[0]['mac']} `);
-			console.log(`${value.forEach(
-				function(element) {
-					console.log(` --Address ${i}: ${element['cidr']} `);
-					i++;
-				})}`
-			);
-		}
-	}
-
-	//Added line until i figure out why undefined is being displayed.
-
-	console.log(`\nRelay Status:`);
-	console.log(`Relay #:	Pin #:	Status:	Description/Device:`);
-	console.log(`-1		IO5	On	Reservoir Valve`);
-	console.log(`-2		IO6	On	Ventilation Fans`);
-	console.log(`-3		IO12	Off	Irrigation Pump`);
-	console.log(`-4		IO13	On	Light 1`);
-	console.log(`-5		IO19	Off	`);
-	console.log(`-6		IO16	Off	`);
-	console.log(`-7		IO26	Off	`);
-	console.log(`-8		IO20	Off	`);
-
-	console.log(`\nTask Info:`);
-	console.log(` -growBox - Root (Task Master):`);
-	console.log(` --Name: root-1fPUas `);
-	console.log(` --IP Address: 19.168.1.1 `);
-	console.log(` --Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptions)} `);
-
-	console.log(`\nCurrent Tasks:`);
-	console.log(` -Water: Reservoir Valve Open`);
-	console.log(` -Light: On`);
-	console.log(` -Air: On - Cooling to 72 F`);
-
-	console.log(`\nScheduled Tasks:`);
-	console.log(` -Water: Irrigation - On - ${today.toLocaleDateString("en-US", timeOptions)} `);
-	console.log(` -Light: Off - ${today.toLocaleDateString("en-US", timeOptions)} `);
 }
 
-//Run the code above every 10 secs
+//Run the code above every X secs
+async function test() {
+	var test = await aggregateSystemStatus();
+	//Calling a value of an object.
+	//console.log(test.system["caseTemperature"]["28-011830a39bff"]["reading"]);
+	console.log(JSON.stringify(test));
+}
+
 setInterval(function () {
 	console.log('\033c');
-	console.log(aggregateSystemStatus());
+	//Can be called to console directly using .then
+	//aggregateSystemStatus().then(console.log);
+	//Can be called within a async function
+	test();
 }, 2000);
