@@ -23,7 +23,7 @@ function processData(sensorID, data) {
 	return sensorTemperatureReadingParsed;
 };
 
-async function readSensorSingle (sensorID) {
+async function readSensorSingleDS18B20 (sensorID) {
 	sensorFilePath = `/sys/bus/w1/devices/${sensorID}/w1_slave`;
 	try {
         	const text = await readFileAsync(sensorFilePath, {encoding: 'utf8'});
@@ -34,7 +34,7 @@ async function readSensorSingle (sensorID) {
     	}
 }
 
-function readSensorAll () {
+function readSensorAllDS18B20 () {
 	console.log('test');
 }
 
@@ -45,6 +45,6 @@ readSensorSingle('28-011830a39bff')
 */
 
 module.exports = {
-	readSensorSingle,
-	readSensorAll
+	readSensorSingleDS18B20,
+	readSensorAllDS18B20
 }

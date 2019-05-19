@@ -51,10 +51,10 @@ Modules that contain functions that can be imported for use.
 ```
 
 #### sensor.gbstem.js: A collection of sensor data collection functions
-##### readSensorSingle (sensorID)
+##### readSensorSingleDS18B20 (sensorID)
 ```
  Takes: Unique ID of sensor which can be found in /sys/bus/w1/devices/<device> - 
-	readSensorSingle (28-011830a09cff)
+	readSensorSingleDS18B20 (28-011830a09cff)
 		.then(console.log) <--- or whatever you want to do with the promise. 
  Returns: JSON object with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
 	  millidegree celsius
@@ -62,12 +62,12 @@ Modules that contain functions that can be imported for use.
 	bc 01 4b 46 7f ff 0c 10 a4 : crc=a4 YES
 	bc 01 4b 46 7f ff 0c 10 a4 t=27750
    Result: 
-	Success: {"sensorID": {"reading": "27750"}}
+	Success: {"28-011830a09cff": {"reading": "27750"}}
 	Error: {"28-011830a39bffs": {"reading": {"error": "Error: ENOENT: no such file or directory, open '/sys/bus/w1/devices/28-011830a39bffs/w1_slave'"}}}
 ```
-##### INCOMPLETE - readSensorAll ()
+##### INCOMPLETE - readSensorAllDS18B20 ()
 ```
- Takes: Nothing - readSensorAll () 
+ Takes: Nothing - readSensorAllDS18B20 () 
  Returns: An array of JSON objects with parsed contents of w1_slave located beneath /sys/bus/w1/devices/<device>/ to return 
 	  millidegree celsius
 ```
