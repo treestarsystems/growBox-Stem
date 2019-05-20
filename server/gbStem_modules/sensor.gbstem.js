@@ -30,7 +30,7 @@ async function readSensorSingleDS18B20 (sensorID) {
 	        return processData(sensorID, text);
     	}
     	catch (err) {
-        	return {[sensorID]: {"reading": {"error": JSON.stringify(err)}}};
+        	return {[sensorID]: {"error": JSON.stringify(err)}};
     	}
 }
 

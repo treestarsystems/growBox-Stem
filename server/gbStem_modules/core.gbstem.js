@@ -5,7 +5,7 @@ Inputs  -
 Action  -
 */
 
-export function temperatureConversion(temperature, scale) {
+function temperatureConversion(temperature, scale) {
 	//From millidegree Celsius to Celsius
 	if (scale == 'c') {
 		return temperature/1000;
