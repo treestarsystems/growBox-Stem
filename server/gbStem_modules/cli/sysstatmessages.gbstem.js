@@ -161,6 +161,8 @@ async function displaySystemStatus() {
 	tty.write(`Current Time: ${display.system.currentTimeHuman} \n`);
 	tty.write(`OS: ${display.system.systemOS} \n`);
 	tty.write(`System Load (1m): ${display.system.systemLoad} \n`);
+	tty.write(`Free Momory: ${display.system.memoryFree} of ${display.system.memoryTotal} MBs\n`);
+	tty.write(`Uptime: ${display.system.uptime} Mins\n`);
 	//Conversion string/setting should be taken from local DB
 	tty.write(`Internal Case Temperature: \n`);
 	//for loop that retrieves the key in object(s).
@@ -172,8 +174,6 @@ async function displaySystemStatus() {
 		}
 	}
 	tty.write(`Hostname: ${display.system.hostname} \n`);
-	tty.write(`Uptime: ${display.system.uptime} Mins\n`);
-	tty.write(`Momory: Free - ${display.system.memoryFree} of ${display.system.memoryTotal} MBs\n`);
 
 	tty.write(`\nDisk Usage: \n`);
 	for(key in display.system.disks) {
