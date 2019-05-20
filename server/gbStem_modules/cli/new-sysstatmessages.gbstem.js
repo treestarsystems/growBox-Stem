@@ -162,23 +162,42 @@ async function displaySystemStatus() {
 	tty.write(`OS: ${display.system.systemOS} \n`);
 	tty.write(`System Load (1m): ${display.system.systemLoad} \n`);
 	//Conversion string/setting should be taken from local DB
-	//for loop that retrieves the first key in object.
-	for(firstKey in display.system.caseTemperature) {
-		tty.write(`Internal Case Temperature: \n`);
-		if (Object.keys(display.system.caseTemperature[firstKey])[0] == 'reading') {
-			tty.write(` SensorID: ${firstKey} - ${(core.temperatureConversion(Number(display.system.caseTemperature[firstKey]["reading"]), 'f')).toFixed(2)} F\n`);
+	tty.write(`Internal Case Temperature: \n`);
+	//for loop that retrieves the key in object(s).
+	for(key in display.system.caseTemperature) {
+		if (Object.keys(display.system.caseTemperature[key])[0] == 'reading') {
+			tty.write(` SensorID: ${key} - ${(core.temperatureConversion(Number(display.system.caseTemperature[key]["reading"]), 'f')).toFixed(2)} F\n`);
 		} else {
-			tty.write(` SensorID: ${firstKey} - Unale to retrieve sensor data \n`);
+			tty.write(` SensorID: ${key} - Unale to retrieve sensor data \n`);
 		}
 	}
 	tty.write(`Hostname: ${display.system.hostname} \n`);
 	tty.write(`Uptime: ${(display.system.uptime/60).toFixed()} Mins\n`);
-	tty.write(`Momory: Free - ${(display.system.memoryFree/1000000).toFixed()} of ${(display.system.memoryTotal/1000000).toFixed()} MBs\n`);
+	tty.write(`Momory: Free - ${(Number(display.system.memoryFree)/1000000).toFixed()} of ${(Number(display.system.memoryTotal)/1000000).toFixed()} MBs\n`);
 
 	tty.write(`\nDisk Usage: \n`);
+	for(key in display.system.disks) {
+		tty.write(`${key}: \n`);
+		tty.write(` Path: ${display.system.disks[key]["path"]} \n`);
+		tty.write(`  Free: ${display.system.disks[key]["diskFreeGb"]} GB\n`);
+		tty.write(`  Total: ${display.system.disks[key]["diskTotalGb"]} GB\n`);
+		tty.write(`  Used: ${display.system.disks[key]["diskUsedPercent"]}%\n`);
+	}
 
 	tty.write(`\nNetwork Interface Information:\n`);
-
+	for(key in display.system.networkInterfaces) {
+		tty.write(`${key}: \n`);
+		tty.write(` MAC: ${display.system.networkInterfaces[key]["interfaceMac"]} \n`);
+/*
+		for (const [key, value] of Object.entries(display.system.networkInterfaces[key])) {
+			var i = 0;
+			value.forEach(function(interface) {
+				tty.write(` ${i}: ${display.system.networkInterfaces[key]["address"]} \n`);
+				i++;
+			})
+		}
+*/
+	}
 	tty.write(`\nTask Info:\n`);
 
 	tty.write(`\nRelay Status:\n`);
@@ -207,4 +226,4 @@ setInterval(function () {
 setInterval(function () {
 	tty.write('\033c');
 	displaySystemStatus();
-}, 1500);
+}, 3000);
