@@ -194,9 +194,10 @@ async function displaySystemStatus() {
 			addi++;
 		}
 	}
-	tty.write(`\nTask Info:\n`);
 
 	tty.write(`\nRelay Status:\n`);
+
+	tty.write(`\nTask Info:\n`);
 
 	tty.write(`\nCurrent Tasks:\n`);
 
