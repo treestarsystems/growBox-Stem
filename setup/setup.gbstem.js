@@ -21,10 +21,12 @@ What input do I need?
 mount points beside / to monitor
 relay count - assign to variable then ask next ? that many times
 relay pin
-temp conversion - c,f,k
 temp sesnse id - parse dir for ID strings that start with 28-????
 console data refresh greater than 5secs
 */
+
+var defaultHostname = `stem-${core.genRegular(5)}`;
+var ipExpression = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))/;
 
 var questions = [
 {
@@ -39,26 +41,57 @@ var questions = [
 {
   type: 'input',
   name: 'hostname',
-  message: `Desired local hostname? (stem-${core.genRegular(5)})`,
+  message: `Desired local hostname? (${defaultHostname})`,
+  default: defaultHostname
 },
 {
   type: 'input',
   name: 'gbRootAddress',
   message: `growBox-Root IP Address?`,
+  validate: function(value) {
+   var valid = value.match(ipExpression);
+	if (valid) {
+		return true;
+	}
+	return 'Please enter a valid IP Address';
+  }
 },
 {
   type: 'number',
   name: 'relayCount',
   message: `How many relays will be controlled?`,
+  validate: function(value) {
+     var valid = !isNaN(parseFloat(value));
+     return valid || 'Please enter a number';
+  },
+  filter: Number
 },
 {
-  type: 'list',
+  type: 'expand',
   name: 'temperatureScale',
   message: `Desired temperature scale?`,
-  choices: ['C - Celsius', 'F - Fahrenheit', 'K - Kelvin'],
-  filter: function(val) {
+  choices: [
+      {
+        key: 'C',
+        name: 'C - Celsius',
+        value: 'c'
+      },
+      {
+        key: 'F',
+        name: 'F - Fahrenheit',
+        value: 'f'
+      },
+      {
+        key: 'K',
+        name: 'K - Kelvin',
+        value: 'k'
+      }
+    ]
+/*
+  filter: function(value) {
       return val.toLowerCase();
   }
+*/
 },
 {
   type: 'input',
