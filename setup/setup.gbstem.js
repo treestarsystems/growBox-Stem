@@ -107,14 +107,7 @@ var questions = [
   type: 'input',
   name: 'hostname',
   message: `Desired hostname? (stem-${core.genRegular(5)})`,
-},
-{
-  type: 'input',
-  name: 'hostname',
-  message: `Desired hostname? (stem-${core.genRegular(5)})`,
 }
-
-
 ]
 
 inquirer.prompt(questions).then(answers => {
