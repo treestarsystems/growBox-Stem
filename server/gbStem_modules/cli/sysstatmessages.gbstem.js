@@ -16,6 +16,7 @@ const sensor = require('../sensor.gbstem.js');
 const core = require('../core.gbstem.js');
 var projectName = 'growBox - Stem (Environmental Control System)';
 var timeOptions = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+var timeOptionsTasks = { hour: '2-digit', minute: '2-digit'};
 //This should be retrieved from a local database. I think SQLite
 var paths = [os.platform() === 'win32' ? 'c:' : '/', '/mnt/usb'];
 var sensorID = '28-011830a39bff';
@@ -90,7 +91,7 @@ function collectSystemStatusRelays() {
 	var collectedDataLocalRelayData = {};
 	var i = 1;
 	while (i <= 8) {
-		collectedDataLocalRelayData[i] = {"pin": "value","status": "value","description": "value"};
+		collectedDataLocalRelayData[i] = {"pin": i+1,"status": "value","description": "value"};
 		i++;
 	}
 	return collectedDataLocalRelayData;
@@ -104,7 +105,7 @@ function collectSystemStatusTasksCurrent(limit) {
 	var collectedDataRemoteTasksInfo = {};
 	var i = 0;
 	while (i < limit) {
-		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "value","endTime": "value"};
+		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value12345678901234567890","startTime": "1483228800","endTime": "1558404871000"};
 		i++;
 	}
 	return collectedDataRemoteTasksInfo;
@@ -117,7 +118,7 @@ function collectSystemStatusTasksScheduled(limit) {
 	var collectedDataRemoteTasksInfo = {};
 	var i = 0;
 	while (i < limit) {
-		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "value","endTime": "value"};
+		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "1483228800","endTime": "1558404871000"};
 		i++;
 	}
 	return collectedDataRemoteTasksInfo;
@@ -137,14 +138,6 @@ async function aggregateSystemStatus() {
 				"tasksCurrent": collectedDataRemoteTasksCurrent,
 				"tasksScheduled": collectedDataRemoteTasksScheduled
 				}
-/*
-	\nTask Info:`);
-	 -growBox - Root (Task Master):`);
-	 --Name: root-1fPUas `);
-	 --IP Address: 19.168.1.1 `);
-	 --Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptions)} `);
-*/
-
 	return collectedData;
 }
 
@@ -156,6 +149,7 @@ function sendCollectedData() {
 
 async function displaySystemStatus() {
 	var display = await aggregateSystemStatus();
+	var lcommDate = new Date(1556776971000);
 
 	tty.write(`${display.projectName} \n\n`);
 	tty.write(`Time: ${display.system.currentTimeHuman}`);
@@ -163,7 +157,7 @@ async function displaySystemStatus() {
 	tty.write(` | 1m Load: ${display.system.systemLoad}`);
 	tty.write(` | Free Momory: ${display.system.memoryFree} of ${display.system.memoryTotal} MBs`);
 	tty.write(` | Uptime: ${display.system.uptime} Mins`);
-	tty.write(` | Hostname: ${display.system.hostname} \n`);
+	tty.write(` | Hostname: ${display.system.hostname} \n\n`);
 	//Conversion string/setting should be taken from local DB
 	tty.write(`Internal Case Temperature: \n`);
 	//for loop that retrieves the key in object(s).
@@ -175,7 +169,7 @@ async function displaySystemStatus() {
 		}
 	}
 
-	tty.write(`\nDisk Usage: \n`);
+	tty.write(`\nDisk(s): \n`);
 	for(key in display.system.disks) {
 		tty.write(`${key}:`);
 		tty.write(` Path: ${display.system.disks[key]["path"]}`);
@@ -184,7 +178,7 @@ async function displaySystemStatus() {
 		tty.write(` | Used: ${display.system.disks[key]["diskUsedPercent"]}%\n`);
 	}
 
-	tty.write(`\nNetwork Interface Information:\n`);
+	tty.write(`\nNetwork Interface(s):\n`);
 	for(key in display.system.networkInterfaces) {
 		var addi = 0;
 		tty.write(`${key}:`);
@@ -197,12 +191,45 @@ async function displaySystemStatus() {
 	}
 
 	tty.write(`\nRelay Status:\n`);
+	tty.write(`Relay #:	Pin #:	Status:	Description/Device:\n`);
+	for(key in display.relays) {
+		tty.write(`${key}:`);
+		tty.write(`		IO${display.relays[key]["pin"]}`);
+		tty.write(`	${display.relays[key]["status"]}`);
+		tty.write(`	${display.relays[key]["description"]}`);
+		tty.write(`\n`);
+	}
 
-	tty.write(`\nTask Info:\n`);
+	tty.write(`\ngrowBox-Root Info:\n`);
+	tty.write(` Name: root-1fPUas`);
+	tty.write(` | Address: 19.168.1.1`);
+	tty.write(` | Last Communication: ${lcommDate.toLocaleDateString("en-US", timeOptionsTasks)} `);
+	tty.write(`\n`);
 
 	tty.write(`\nCurrent Tasks:\n`);
+	for(key in display.tasksCurrent) {
+		var startTime = new Date(Number(display.tasksCurrent[key]["startTime"]));
+		var endTime = new Date(Number(display.tasksCurrent[key]["endTime"]));
+		tty.write(` Type: ${display.tasksCurrent[key]["type"]}`);
+		tty.write(` | Status: ${display.tasksCurrent[key]["status"]}`);
+		tty.write(` | Description: ${(display.tasksCurrent[key]["description"]).slice(0,19)}`);
+		tty.write(` | Start: ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
+		tty.write(` End: ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
+		tty.write(`\n`);
+	}
 
 	tty.write(`\nScheduled Tasks:\n`);
+	for(key in display.tasksScheduled) {
+		var startTime = new Date(Number(display.tasksScheduled[key]["startTime"]));
+		var endTime = new Date(Number(display.tasksScheduled[key]["endTime"]));
+		tty.write(` Type: ${display.tasksScheduled[key]["type"]}`);
+		tty.write(` | Status: ${display.tasksScheduled[key]["status"]}`);
+		tty.write(` | Description: ${(display.tasksScheduled[key]["description"]).slice(0,19)}`);
+		tty.write(` | Start: ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
+		tty.write(` End: ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
+		tty.write(`\n`);
+	}
+
 }
 
 //Run the code above every X secs
@@ -224,4 +251,5 @@ setInterval(function () {
 setInterval(function () {
 	tty.write('\033c');
 	displaySystemStatus();
-}, 20000);
+//}, 20000);
+}, 5000);

@@ -26,7 +26,6 @@ relay pin
 temp conversion - c,f,k
 temp sesnse id - parse dir for ID strings that start with 28-????
 console data refresh greater than 5secs
-tasks to show
 */
 
 var questions = [{
