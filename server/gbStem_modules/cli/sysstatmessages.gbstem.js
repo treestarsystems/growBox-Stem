@@ -158,11 +158,12 @@ async function displaySystemStatus() {
 	var display = await aggregateSystemStatus();
 
 	tty.write(`${display.projectName} \n\n`);
-	tty.write(`Current Time: ${display.system.currentTimeHuman} \n`);
-	tty.write(`OS: ${display.system.systemOS} \n`);
-	tty.write(`System Load (1m): ${display.system.systemLoad} \n`);
-	tty.write(`Free Momory: ${display.system.memoryFree} of ${display.system.memoryTotal} MBs\n`);
-	tty.write(`Uptime: ${display.system.uptime} Mins\n`);
+	tty.write(`Time: ${display.system.currentTimeHuman}`);
+	tty.write(` | OS: ${display.system.systemOS}`);
+	tty.write(` | 1m Load: ${display.system.systemLoad}`);
+	tty.write(` | Free Momory: ${display.system.memoryFree} of ${display.system.memoryTotal} MBs`);
+	tty.write(` | Uptime: ${display.system.uptime} Mins`);
+	tty.write(` | Hostname: ${display.system.hostname} \n`);
 	//Conversion string/setting should be taken from local DB
 	tty.write(`Internal Case Temperature: \n`);
 	//for loop that retrieves the key in object(s).
@@ -173,26 +174,26 @@ async function displaySystemStatus() {
 			tty.write(` SensorID: ${key} - Unale to retrieve sensor data \n`);
 		}
 	}
-	tty.write(`Hostname: ${display.system.hostname} \n`);
 
 	tty.write(`\nDisk Usage: \n`);
 	for(key in display.system.disks) {
-		tty.write(`${key}: \n`);
-		tty.write(` Path: ${display.system.disks[key]["path"]} \n`);
-		tty.write(`  Free: ${display.system.disks[key]["diskFreeGb"]} GB\n`);
-		tty.write(`  Total: ${display.system.disks[key]["diskTotalGb"]} GB\n`);
-		tty.write(`  Used: ${display.system.disks[key]["diskUsedPercent"]}%\n`);
+		tty.write(`${key}:`);
+		tty.write(` Path: ${display.system.disks[key]["path"]}`);
+		tty.write(` | Free: ${display.system.disks[key]["diskFreeGb"]} GB`);
+		tty.write(` | Total: ${display.system.disks[key]["diskTotalGb"]} GB`);
+		tty.write(` | Used: ${display.system.disks[key]["diskUsedPercent"]}%\n`);
 	}
 
 	tty.write(`\nNetwork Interface Information:\n`);
 	for(key in display.system.networkInterfaces) {
 		var addi = 0;
-		tty.write(`${key}: \n`);
-		tty.write(` MAC: ${display.system.networkInterfaces[key]["interfaceMac"]} \n`);
+		tty.write(`${key}:`);
+		tty.write(` MAC: ${display.system.networkInterfaces[key]["interfaceMac"]}`);
 		for(const addressKey of display.system.networkInterfaces[key]["address"]) {
-			tty.write(` Address ${addi}: ${addressKey} \n`);
+			tty.write(` | Address ${addi}: ${addressKey}`);
 			addi++;
 		}
+		tty.write(`\n`);
 	}
 
 	tty.write(`\nRelay Status:\n`);
