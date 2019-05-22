@@ -158,8 +158,10 @@ function stemQs (generalAnswers) {
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
 		var rc = 1;
 		var itc = 1;
+		answers["relayData"] = {};
+		answers["internalTempData"] = {};
 		while (rc <= answers["relayCount"]) {
-			console.log(rc);
+			answers["relayData"][rc] = `{"pin": "IO${rc}", "description": "Relay info"}`;
 			rc++;
 		}
 		while (itc <= answers["internalTemperatureSensorCount"]) {
