@@ -267,30 +267,18 @@ function relayQs (stemAnswers) {
   		default: `${rcExample}`,
   		validate: function(value) {
 			valid = value.replace(/\s/g, "").split(',');
+			var pass = /^\d+$/;
 			if (valid.length == rc) {
 				if (Array.isArray(valid)) {
 					valid.forEach((element) => {
-						if (!Number.isInteger(element)) {
-							console.log(element);
+						if (!element.match(pass)) {
+							console.log(" fail");
 						} else {
-							return Array.isArray(valid);
+							console.log(" pass");
 						}
 					});
-//					return Array.isArray(valid);
 				}
 			}
-/*
-			array.forEach((element) => {
-				i = 0;
-				console.log(element[i]);
-				if (!isNaN(parseFloat(element[i]))) {
-					`Please enter valid <GPIO.BMC> numbers seperated by commas for each relay. Ex: ${rcExample} -`;
-				} else {
-					`${rcExample} is a number.`;;
-				}
-			});
-*/
-//     			return valid || `Please enter valid <GPIO.BMC> numbers seperated by commas for each relay. Ex: ${rcExample}`;
   		},
 	},
 	{
