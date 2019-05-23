@@ -66,19 +66,19 @@ function generalQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		switch(answers["sysType"].toLowerCase()) {
 			case 'root':
-				console.log('**growBox-Root Conf Questions**');
+				console.log('\n**growBox-Root Conf Questions**');
 				rootQs(answers);
 				break;
 			case 'stem':
-				console.log('**growBox-Stem Conf Questions**');
+				console.log('\n**growBox-Stem Conf Questions**');
 				stemQs(answers);
 				break;
 			case 'branch':
-				console.log('**growBox-Branch Conf Questions**');
+				console.log('\n**growBox-Branch Conf Questions**');
 				branchQs(answers);
 				break;
 			case 'flower':
-				console.log('**growBox-Flower Conf Questions**');
+				console.log('\n**growBox-Flower Conf Questions**');
 				flowerQs(answers);
 				break;
 		}
@@ -105,8 +105,8 @@ function rootQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-//		return answers;
-		console.log(answers);
+		return answers;
+//		console.log(answers);
 	});
 }
 
@@ -123,6 +123,8 @@ function stemQs (generalAnswers) {
   		type: 'input',
   		name: 'gbRootAddress',
   		message: `growBox-Root IP Address?`,
+//		remove later
+  		default: '1.1.1.1',
   		validate: function(value) {
    		var valid = value.match(ipExpression);
 			if (valid) {
@@ -135,6 +137,8 @@ function stemQs (generalAnswers) {
 	  	type: 'number',
   		name: 'relayCount',
 	  	message: `How many relays will be controlled?`,
+//		remove later
+  		default: '2',
   		validate: function(value) {
 	     		var valid = !isNaN(parseFloat(value));
      			return valid || 'Please enter a number';
@@ -144,6 +148,8 @@ function stemQs (generalAnswers) {
 	{
   		type: 'number',
   		name: 'internalTemperatureSensorCount',
+//		remove later
+  		default: '2',
   		message: `How many internal sensors will be controlled?`,
   		validate: function(value) {
      			var valid = !isNaN(parseFloat(value));
@@ -156,21 +162,10 @@ function stemQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-		var rc = 1;
-		var itc = 1;
-		answers["relayData"] = {};
-		answers["internalTempData"] = {};
-		while (rc <= answers["relayCount"]) {
-			answers["relayData"][rc] = `{"pin": "IO${rc}", "description": "Relay info"}`;
-			rc++;
-		}
-		while (itc <= answers["internalTemperatureSensorCount"]) {
-			console.log(itc);
-			itc++;
-		}
+		console.log('\n**growBox-Stem Relay Entry**');
+		relayQs(answers);
 //		return answers;
-		console.log(answers);
-	});
+	})
 }
 
 function branchQs (generalAnswers) {
@@ -242,6 +237,76 @@ function flowerQs (generalAnswers) {
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
 //		return answers;
 		console.log(answers);
+	});
+}
+
+//loop through array
+/*
+yourArray.forEach(function (arrayItem) {
+    var x = arrayItem.prop1 + 2;
+    console.log(x);
+});
+*/
+
+function relayQs (stemAnswers) {
+	stemAnswers["relayData"] = {};
+	rc = stemAnswers["relayCount"];
+	rcExample = [];
+
+	//Create example of how data should be entered.
+	for (i = 1; i <= rc; i++) {
+		rcExample.push(i);
+	}
+
+	var questions = [
+	{
+  		type: 'input',
+  		name: 'pin',
+  		message: `Enter each relays corresponding <GPIO.BMC> number (Numbers only) seperated by commas - Ex: ${rcExample}?`,
+//		remove later
+  		default: `${rcExample}`,
+  		validate: function(value) {
+			valid = value.replace(/\s/g, "").split(',');
+			if (valid.length == rc) {
+				if (Array.isArray(valid)) {
+					valid.forEach((element) => {
+						if (!Number.isInteger(element)) {
+							console.log(element);
+						} else {
+							return Array.isArray(valid);
+						}
+					});
+//					return Array.isArray(valid);
+				}
+			}
+/*
+			array.forEach((element) => {
+				i = 0;
+				console.log(element[i]);
+				if (!isNaN(parseFloat(element[i]))) {
+					`Please enter valid <GPIO.BMC> numbers seperated by commas for each relay. Ex: ${rcExample} -`;
+				} else {
+					`${rcExample} is a number.`;;
+				}
+			});
+*/
+//     			return valid || `Please enter valid <GPIO.BMC> numbers seperated by commas for each relay. Ex: ${rcExample}`;
+  		},
+	},
+	{
+  		type: 'input',
+  		name: 'description',
+//		remove later
+  		default: 'Water Pump',
+  		message: `Please enter in a description? (Water Valve,Light 1A)`,
+	}
+	];
+
+	inquirer.prompt(questions).then(answers => {
+		stemAnswers["relayData"][i] = answers;
+//		console.log(answers);
+//		console.log(JSON.stringify(stemAnswers));
+//		return stemAnswers;
 	});
 }
 
