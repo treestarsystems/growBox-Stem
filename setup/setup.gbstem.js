@@ -30,7 +30,7 @@ var ipExpression = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){
 function generalQs (generalAnswers) {
 	var questions = [
 	{
-  		type: 'rawlist',
+  		type: 'list',
   		name: 'sysType',
   		message: "What type of system is this?",
   		choices: ['Root', 'Stem', 'Branch', 'Flower'],
@@ -240,64 +240,109 @@ function flowerQs (generalAnswers) {
 	});
 }
 
-//loop through array
-/*
-yourArray.forEach(function (arrayItem) {
-    var x = arrayItem.prop1 + 2;
-    console.log(x);
-});
-*/
-
 function relayQs (stemAnswers) {
 	stemAnswers["relayData"] = {};
 	rc = stemAnswers["relayCount"];
-	rcExample = [];
+	rcExPin = [];
+	rcExDesc = [];
 
 	//Create example of how data should be entered.
 	for (i = 1; i <= rc; i++) {
-		rcExample.push(i);
+		rcExPin.push(i);
+	}
+
+	for (i = 1; i <= rc; i++) {
+		rcExDesc.push(`Water Pump ${i}`);
 	}
 
 	var questions = [
 	{
   		type: 'input',
   		name: 'pin',
-//  		message: `Enter each relays corresponding <GPIO.BMC> number (Numbers only) seperated by commas - Ex: ${rcExample}?`,
   		message: `Enter each relays corresponding <GPIO.BMC> number.`,
-//		remove later
-//  		default: `${rcExample}`,
   		validate: function(value) {
+			/*
+			valid transform the data into an array with no white/blank spaces
+			1. '4 0' becomes: '40'
+			2 ' a' becomes: 'a' <---this will checked later.
+			*/
 			valid = value.replace(/\s/g, "").split(',');
-			var pass = /^\d+$/;
-			progression = 0;
-			if (valid.length == rc) {
-				if (Array.isArray(valid)) {
-					valid.forEach((element) => {
-						if (element.match(pass)) {
-							progression++;
-							if (progression == rc) {
-								console.log(valid);
-								return true;
-							}
-						}
-					});
+			//matches numbers only. ['1a','1'] will be invalid
+			var noLetters = /^\d+$/;
+			//matches blank items in array. ['1',''] will be invalid
+			var noBlanks = /^\s+$/;
+			//Will be incremented to equal rc (relayCount)
+			progress = 0;
+			if (Array.isArray(valid)) {
+				if (valid.length == rc) {
+					verify();
+					if (progress == rc) {
+						return true;
+					}
 				}
 			}
-			return `\n**Please enter numbers only\n**Seperated by commas\n**Blank spaces will be removed\n**Example: ${rcExample}`;
+			return `\n**Please enter numbers only\n**Seperated by commas\n**Blank spaces will be removed\n**Example: ${rcExPin}`;
+
+			/*
+			This was a bit annoying to figure out but this funtion runs through array to:
+			1. verify it is a number.
+			2. increment progress counter to match the value of relays entered previously.
+			*/
+			function verify () {
+				valid.forEach((element) => {
+					if (element.match(noLetters) && !element.match(noBlanks)) {
+						progress++;
+					}
+				});
+			}
   		},
 	},
 	{
   		type: 'input',
   		name: 'description',
 //		remove later
-  		default: 'Water Pump',
+  		default: 'Water Pump,Light 1A',
   		message: `Please enter in a description? (Water Valve,Light 1A)`,
+  		validate: function(value) {
+			/*
+			valid transform the data into an array with no white/blank spaces
+			1. ' 40 ' becomes: '40'
+			2 ' a ' becomes: 'a'
+			*/
+			valid = value.trim().split(',');
+			//Matches blank items in array. ['1',''] will be invalid
+			var noBlanks = /^\s+$/;
+			//Will be incremented to equal rc (relayCount)
+			progress = 0;
+			if (Array.isArray(valid)) {
+				if (valid.length == rc) {
+					verify();
+					if (progress == rc) {
+						return true;
+					}
+				}
+			}
+			return `\n**Seperate descriptions by commas\n**Blank spaces will be removed from the beginning and end of element\n**Example: ${rcExDesc}`;
+
+			/*
+			This was a bit annoying to figure out but this funtion runs through array to:
+			1. verify it is a number.
+			2. increment progress counter to match the value of relays entered previously.
+			*/
+			function verify () {
+				valid.forEach((element) => {
+					if (!element.match(noBlanks)) {
+						progress++;
+					}
+				});
+			}
+  		},
 	}
 	];
 
 	inquirer.prompt(questions).then(answers => {
 		stemAnswers["relayData"][i] = answers;
-//		console.log(answers);
+		console.log(answers);
 //		console.log(JSON.stringify(stemAnswers));
 //		return stemAnswers;
 	});
