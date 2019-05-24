@@ -264,12 +264,8 @@ function flowerQs (generalAnswers) {
 }
 
 function relayAndSensorQs (stemAnswers) {
-/*
-if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 0)) {
-} else {
-}
-*/
 	stemAnswers["relayData"] = {};
+	stemAnswers["sensorData"] = {};
 	rc = stemAnswers["relayCount"];
 	isc = stemAnswers["internalDS18B20TemperatureSensorCount"];
 	rcExPin = [];
@@ -327,9 +323,7 @@ if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 
 		},
 		{
 	  		type: 'input',
-	  		name: 'description',
-	//		remove later
-	  		default: 'Water Pump,Light 1A',
+	  		name: 'relayDescription',
 	  		message: `Please enter in a description? (Rear case,Light 1A)`,
 	  		validate: function(value) {
 				/*
@@ -398,7 +392,7 @@ if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 
 				*/
 				function verify () {
 					valid.forEach((element) => {
-						if (element.match(noLetters) && !element.match(noBlanks)) {
+						if (!element.match(noBlanks)) {
 							progress++;
 						}
 					});
@@ -407,23 +401,21 @@ if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 
 		},
 		{
 	  		type: 'input',
-	  		name: 'description',
-	//		remove later
-	  		default: 'Water Pump,Light 1A',
-	  		message: `Please enter in a description? (Water Valve,Light 1A)`,
+	  		name: 'sensorDescription',
+	  		message: `Please enter a sensor description? (Rear case sensor, Battery Sensor)`,
 	  		validate: function(value) {
 				/*
 				valid transform the data into an array with no white/blank spaces
 				1. ' 40 ' becomes: '40'
 				2 ' a ' becomes: 'a'
 				*/
-				valid = value.trim().split(',');
-				//Will be incremented to equal rc (relayCount)
+				valid = value.replace(/\s/g, "").split(',');
+				//Will be incremented to equal rc (sensorCount)
 				progress = 0;
 				if (Array.isArray(valid)) {
-					if (valid.length == rc) {
+					if (valid.length == isc) {
 						verify();
-						if (progress == rc) {
+						if (progress == isc) {
 							return true;
 						}
 					}
@@ -447,16 +439,25 @@ if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 
 	}
 
 	if ((rc > 0) || (isc > 0)) {
-	inquirer.prompt(questions).then(answers => {
-		var i = 0;
-		answers.pin.split(',').forEach((element) => {
-			stemAnswers["relayData"][i+1] = {"pin": answers.pin.split(',')[i],"description": answers.description.split(',')[i]};
-			i++;
-		});
+		inquirer.prompt(questions).then(answers => {
+			if (rc > 0) {
+				var i = 0;
+				answers.pin.split(',').forEach((element) => {
+					stemAnswers["relayData"][i+1] = {"pin": answers.pin.split(',')[i],"description": answers.relayDescription.split(',')[i]};
+					i++;
+				});
+			}
+			if (isc > 0) {
+				var o = 0;
+				answers.internalDS18B20TemperatureID.split(',').forEach((element) => {
+					stemAnswers["sensorData"][o+1] = {"sensor": answers.internalDS18B20TemperatureID.split(',')[o],"sensorDescription": answers.sensorDescription.split(',')[o]};
+					o++;
+				});
+			}
 
-		console.log(JSON.stringify(stemAnswers));
-		return stemAnswers;
-	});
+			console.log(JSON.stringify(stemAnswers));
+			return stemAnswers;
+		});
 	}
 }
 
