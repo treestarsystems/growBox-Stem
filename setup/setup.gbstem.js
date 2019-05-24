@@ -25,7 +25,14 @@ temp sesnse id - parse dir for ID strings that start with 28-????
 console data refresh greater than 5secs
 */
 
+//matches IPv4/6
 var ipExpression = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))/;
+//Escapes special characters where necessary.
+var escapeSpecial = /[-[\]{}()*+?.,\\/^$|#\s]/g;
+//matches numbers only. ['1a','1'] will be invalid
+var noLetters = /^\d+$/;
+//matches blank items in array. ['1',''] will be invalid
+var noBlanks = /^\s+$/;
 
 function generalQs (generalAnswers) {
 	var questions = [
@@ -134,6 +141,18 @@ function stemQs (generalAnswers) {
   		}
 	},
 	{
+  		type: 'input',
+  		name: 'gbRootUser',
+  		message: `growBox-Root Username`,
+  		default: `stemuser${core.genRegular(15)}`
+	},
+	{
+  		type: 'input',
+  		name: 'gbRootPassword',
+  		message: `growBox-Root Password`,
+  		default: `${core.genSpecial(45)}`,
+	},
+	{
 	  	type: 'number',
   		name: 'relayCount',
 	  	message: `How many relays will be controlled?`,
@@ -147,10 +166,10 @@ function stemQs (generalAnswers) {
 	},
 	{
   		type: 'number',
-  		name: 'internalTemperatureSensorCount',
+  		name: 'internalDS18B20TemperatureSensorCount',
 //		remove later
   		default: '2',
-  		message: `How many internal sensors will be controlled?`,
+  		message: `How many internal DS18B20 sensors will be controlled?`,
   		validate: function(value) {
      			var valid = !isNaN(parseFloat(value));
      			return valid || 'Please enter a number';
@@ -162,9 +181,13 @@ function stemQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-		console.log('\n**growBox-Stem Relay Entry**');
-		relayQs(answers);
-//		return answers;
+		if ((answers["relayCount"] > 0) || (answers["internalDS18B20TemperatureSensorCount"] > 0)) {
+			console.log('\n**growBox-Stem Relay & Temperature Sensor Entry**');
+			relayAndSensorQs(answers);
+		} else {
+			console.log(answers);
+			return answers;
+		}
 	})
 }
 
@@ -191,7 +214,7 @@ function branchQs (generalAnswers) {
 	},
 	{
   		type: 'number',
-  		name: 'internalTemperatureSensorCount',
+  		name: 'internalDS18B20TemperatureSensorCount',
   		message: `How many internal sensors will be controlled?`,
   		validate: function(value) {
      			var valid = !isNaN(parseFloat(value));
@@ -204,8 +227,8 @@ function branchQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-//		return answers;
-		console.log(answers);
+//		console.log(answers);
+		return answers;
 	});
 }
 
@@ -235,14 +258,20 @@ function flowerQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-//		return answers;
-		console.log(answers);
+//		console.log(answers);
+		return answers;
 	});
 }
 
-function relayQs (stemAnswers) {
+function relayAndSensorQs (stemAnswers) {
+/*
+if ((answers["relayCount"] > 0) || (answers["internalTemperatureSensorCount"] > 0)) {
+} else {
+}
+*/
 	stemAnswers["relayData"] = {};
 	rc = stemAnswers["relayCount"];
+	isc = stemAnswers["internalDS18B20TemperatureSensorCount"];
 	rcExPin = [];
 	rcExDesc = [];
 
@@ -255,97 +284,184 @@ function relayQs (stemAnswers) {
 		rcExDesc.push(`Water Pump ${i}`);
 	}
 
-	var questions = [
-	{
-  		type: 'input',
-  		name: 'pin',
-  		message: `Enter each relays corresponding <GPIO.BMC> number.`,
-  		validate: function(value) {
-			/*
-			valid transform the data into an array with no white/blank spaces
-			1. '4 0' becomes: '40'
-			2 ' a' becomes: 'a' <---this will checked later.
-			*/
-			valid = value.replace(/\s/g, "").split(',');
-			//matches numbers only. ['1a','1'] will be invalid
-			var noLetters = /^\d+$/;
-			//matches blank items in array. ['1',''] will be invalid
-			var noBlanks = /^\s+$/;
-			//Will be incremented to equal rc (relayCount)
-			progress = 0;
-			if (Array.isArray(valid)) {
-				if (valid.length == rc) {
-					verify();
-					if (progress == rc) {
-						return true;
+	var questions = [];
+
+	//Add Relay questions
+	if (rc > 0) {
+		questions.push({
+	  		type: 'input',
+	  		name: 'pin',
+	  		message: `Enter each relays corresponding <GPIO.BMC> number.`,
+	  		validate: function(value) {
+				/*
+				valid transform the data into an array with no white/blank spaces
+				1. '4 0' becomes: '40'
+				2 ' a' becomes: 'a' <---this will checked later.
+				*/
+				valid = value.replace(/\s/g, "").split(',');
+				//Will be incremented to equal rc (relayCount)
+				progress = 0;
+				if (Array.isArray(valid)) {
+					if (valid.length == rc) {
+						verify();
+						if (progress == rc) {
+							return true;
+						}
 					}
 				}
-			}
-			return `\n**Please enter numbers only\n**Seperated by commas\n**Blank spaces will be removed\n**Example: ${rcExPin}`;
+				return `\n**Please enter numbers only\n**Seperated by commas\n**Blank spaces will be removed\n**Example: ${rcExPin}`;
 
-			/*
-			This was a bit annoying to figure out but this funtion runs through array to:
-			1. verify it is a number.
-			2. increment progress counter to match the value of relays entered previously.
-			*/
-			function verify () {
-				valid.forEach((element) => {
-					if (element.match(noLetters) && !element.match(noBlanks)) {
-						progress++;
-					}
-				});
-			}
-  		},
-	},
-	{
-  		type: 'input',
-  		name: 'description',
-//		remove later
-  		default: 'Water Pump,Light 1A',
-  		message: `Please enter in a description? (Water Valve,Light 1A)`,
-  		validate: function(value) {
-			/*
-			valid transform the data into an array with no white/blank spaces
-			1. ' 40 ' becomes: '40'
-			2 ' a ' becomes: 'a'
-			*/
-			valid = value.trim().split(',');
-			//Matches blank items in array. ['1',''] will be invalid
-			var noBlanks = /^\s+$/;
-			//Will be incremented to equal rc (relayCount)
-			progress = 0;
-			if (Array.isArray(valid)) {
-				if (valid.length == rc) {
-					verify();
-					if (progress == rc) {
-						return true;
+				/*
+				This was a bit annoying to figure out but this funtion runs through array to:
+				1. verify it is a number.
+				2. increment progress counter to match the value of relays entered previously.
+				*/
+				function verify () {
+					valid.forEach((element) => {
+						if (element.match(noLetters) && !element.match(noBlanks)) {
+							progress++;
+						}
+					});
+				}
+	  		},
+		},
+		{
+	  		type: 'input',
+	  		name: 'description',
+	//		remove later
+	  		default: 'Water Pump,Light 1A',
+	  		message: `Please enter in a description? (Rear case,Light 1A)`,
+	  		validate: function(value) {
+				/*
+				valid transform the data into an array with no white/blank spaces
+				1. ' 40 ' becomes: '40'
+				2 ' a ' becomes: 'a'
+				*/
+				valid = value.trim().split(',');
+				//Will be incremented to equal rc (relayCount)
+				progress = 0;
+				if (Array.isArray(valid)) {
+					if (valid.length == rc) {
+						verify();
+						if (progress == rc) {
+							return true;
+						}
 					}
 				}
-			}
-			return `\n**Seperate descriptions by commas\n**Blank spaces will be removed from the beginning and end of element\n**Example: ${rcExDesc}`;
+				return `\n**Seperate descriptions by commas\n**Blank spaces will be removed from the beginning and end of element\n**Example: ${rcExDesc}`;
 
-			/*
-			This was a bit annoying to figure out but this funtion runs through array to:
-			1. verify it is a number.
-			2. increment progress counter to match the value of relays entered previously.
-			*/
-			function verify () {
-				valid.forEach((element) => {
-					if (!element.match(noBlanks)) {
-						progress++;
-					}
-				});
-			}
-  		},
+				/*
+				This was a bit annoying to figure out but this funtion runs through array to:
+				1. verify it is a number.
+				2. increment progress counter to match the value of relays entered previously.
+				*/
+				function verify () {
+					valid.forEach((element) => {
+						if (!element.match(noBlanks)) {
+							progress++;
+						}
+					});
+				}
+	  		},
+		});
 	}
-	];
 
+	//Add Internal Sensor questions
+	if (isc > 0) {
+		questions.push({
+	  		type: 'input',
+	  		name: 'internalDS18B20TemperatureID',
+	  		message: `Enter each DS18B20 Sensor ID.\n**Ex: 28-011830a09cff,28-011a630a09cff`,
+	  		validate: function(value) {
+				/*
+				valid transform the data into an array with no white/blank spaces
+				1. '4 0' becomes: '40'
+				2 ' a' becomes: 'a' <---this will checked later.
+				*/
+				valid = value.replace(/\s/g, "").split(',');
+				//Will be incremented to equal isc (relayCount)
+				progress = 0;
+				if (Array.isArray(valid)) {
+					if (valid.length == isc) {
+						verify();
+						if (progress == isc) {
+							return true;
+						}
+					}
+				}
+				return `\n**Please enter correct Sensor ID\n**Seperated by commas\n**Blank spaces will be removed\n**Ex: 28-011830a09cff,28-011a630a09cff`;
+
+				/*
+				This was a bit annoying to figure out but this funtion runs through array to:
+				1. verify it is a number.
+				2. increment progress counter to match the value of relays entered previously.
+				*/
+				function verify () {
+					valid.forEach((element) => {
+						if (element.match(noLetters) && !element.match(noBlanks)) {
+							progress++;
+						}
+					});
+				}
+	  		},
+		},
+		{
+	  		type: 'input',
+	  		name: 'description',
+	//		remove later
+	  		default: 'Water Pump,Light 1A',
+	  		message: `Please enter in a description? (Water Valve,Light 1A)`,
+	  		validate: function(value) {
+				/*
+				valid transform the data into an array with no white/blank spaces
+				1. ' 40 ' becomes: '40'
+				2 ' a ' becomes: 'a'
+				*/
+				valid = value.trim().split(',');
+				//Will be incremented to equal rc (relayCount)
+				progress = 0;
+				if (Array.isArray(valid)) {
+					if (valid.length == rc) {
+						verify();
+						if (progress == rc) {
+							return true;
+						}
+					}
+				}
+				return `\n**Seperate descriptions by commas\n**Blank spaces will be removed from the beginning and end of element\n**Example: ${rcExDesc}`;
+
+				/*
+				This was a bit annoying to figure out but this funtion runs through array to:
+				1. verify it is a number.
+				2. increment progress counter to match the value of relays entered previously.
+				*/
+				function verify () {
+					valid.forEach((element) => {
+						if (!element.match(noBlanks)) {
+							progress++;
+						}
+					});
+				}
+	  		},
+		});
+	}
+
+	if ((rc > 0) || (isc > 0)) {
 	inquirer.prompt(questions).then(answers => {
-		stemAnswers["relayData"][i] = answers;
-		console.log(answers);
-//		console.log(JSON.stringify(stemAnswers));
-//		return stemAnswers;
+		var i = 0;
+		answers.pin.split(',').forEach((element) => {
+			stemAnswers["relayData"][i+1] = {"pin": answers.pin.split(',')[i],"description": answers.description.split(',')[i]};
+			i++;
+		});
+
+		console.log(JSON.stringify(stemAnswers));
+		return stemAnswers;
 	});
+	}
+}
+
+function writeSettings (completedAnswers,) {
+
 }
 
 //Execute code

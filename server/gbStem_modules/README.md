@@ -15,6 +15,13 @@ Modules that contain functions that can be imported for use.
 ```
  Takes: Number - genRegular(5)
  Returns: Alphanumeric string - 5yA9w
+ Character List: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+```
+##### genSpecial(x): Generate a random alphanumeric and special character string
+```
+ Takes: Number - genSpecial(6)
+ Returns: Alphanumeric string - 5y_9w%
+ Character List: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#%&-_
 ```
 ##### getRandomNumber(min, max): Generate a random number within defined range
 ```

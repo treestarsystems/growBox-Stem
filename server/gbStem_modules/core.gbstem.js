@@ -32,6 +32,16 @@ function genRegular(x) {
         return text;
 }
 
+//Generate a random alphanumeric string
+function genSpecial(x) {
+        var specialchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#%&-_";
+        var text = "";
+
+        for (var i = 0; i < x; i++)
+                text += specialchar.charAt(Math.floor(Math.random() * specialchar.length));
+        return text;
+}
+
 //Generate a random number within defined range
 function getRandomNumber(min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -39,6 +49,7 @@ function getRandomNumber(min, max) {
 
 module.exports = {
 	genRegular,
+	genSpecial,
 	getRandomNumber,
 	temperatureConversion
 }
