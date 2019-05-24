@@ -30,7 +30,7 @@ var ipExpression = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){
 function generalQs (generalAnswers) {
 	var questions = [
 	{
-  		type: 'list',
+  		type: 'rawlist',
   		name: 'sysType',
   		message: "What type of system is this?",
   		choices: ['Root', 'Stem', 'Branch', 'Flower'],
@@ -262,23 +262,28 @@ function relayQs (stemAnswers) {
 	{
   		type: 'input',
   		name: 'pin',
-  		message: `Enter each relays corresponding <GPIO.BMC> number (Numbers only) seperated by commas - Ex: ${rcExample}?`,
+//  		message: `Enter each relays corresponding <GPIO.BMC> number (Numbers only) seperated by commas - Ex: ${rcExample}?`,
+  		message: `Enter each relays corresponding <GPIO.BMC> number.`,
 //		remove later
-  		default: `${rcExample}`,
+//  		default: `${rcExample}`,
   		validate: function(value) {
 			valid = value.replace(/\s/g, "").split(',');
 			var pass = /^\d+$/;
+			progression = 0;
 			if (valid.length == rc) {
 				if (Array.isArray(valid)) {
 					valid.forEach((element) => {
-						if (!element.match(pass)) {
-							console.log(" fail");
-						} else {
-							console.log(" pass");
+						if (element.match(pass)) {
+							progression++;
+							if (progression == rc) {
+								console.log(valid);
+								return true;
+							}
 						}
 					});
 				}
 			}
+			return `\n**Please enter numbers only\n**Seperated by commas\n**Blank spaces will be removed\n**Example: ${rcExample}`;
   		},
 	},
 	{
