@@ -18,9 +18,6 @@ var argv = require('minimist')(process.argv.slice(2));
 
 /*
 What input do I need?
-mount points beside / to monitor
-relay count - assign to variable then ask next ? that many times
-relay pin
 temp sesnse id - parse dir for ID strings that start with 28-????
 console data refresh greater than 5secs
 */
@@ -34,7 +31,7 @@ var noLetters = /^\d+$/;
 //matches blank items in array. ['1',''] will be invalid
 var noBlanks = /^\s+$/;
 
-function generalQs (generalAnswers) {
+function generalQs () {
 	var questions = [
 	{
   		type: 'list',
@@ -47,6 +44,34 @@ function generalQs (generalAnswers) {
 	},
 	{
 	  	type: 'expand',
+  		name: 'consoleRefresh',
+	  	message: `How often should the console refresh itself?`,
+  		choices: [
+      			{
+			key: 'a',
+			name: '10 secs',
+			value: '10'
+      			},
+      			{
+			key: 'b',
+			name: '20 secs',
+			value: '20'
+      			},
+      			{
+			key: 'c',
+			name: '30 secs',
+			value: '30'
+      			},
+      			{
+			key: 'd',
+			name: '60 secs',
+			value: '60'
+      			}
+    		],
+		default: 'd'
+	},
+	{
+	  	type: '',
   		name: 'temperatureScale',
 	  	message: `Desired temperature scale?`,
   		choices: [
@@ -71,22 +96,25 @@ function generalQs (generalAnswers) {
 	]
 
 	inquirer.prompt(questions).then(answers => {
-		switch(answers["sysType"].toLowerCase()) {
+		generalAnswers = {}
+		generalAnswers["system"] = answers;
+		generalAnswers["system"]["sysType"] = answers["sysType"].toLowerCase();
+		switch(generalAnswers["system"]["sysType"].toLowerCase()) {
 			case 'root':
 				console.log('\n**growBox-Root Conf Questions**');
-				rootQs(answers);
+				rootQs(generalAnswers);
 				break;
 			case 'stem':
 				console.log('\n**growBox-Stem Conf Questions**');
-				stemQs(answers);
+				stemQs(generalAnswers);
 				break;
 			case 'branch':
 				console.log('\n**growBox-Branch Conf Questions**');
-				branchQs(answers);
+				branchQs(generalAnswers);
 				break;
 			case 'flower':
 				console.log('\n**growBox-Flower Conf Questions**');
-				flowerQs(answers);
+				flowerQs(generalAnswers);
 				break;
 		}
 	})
@@ -149,11 +177,38 @@ function stemQs (generalAnswers) {
   		message: `growBox-Root Password`,
   		default: `${core.genSpecial(45)}`,
 	},
+	//This needs validate logic and then needs to be stored as an array within the localDisks object
 	{
   		type: 'input',
   		name: 'localDisks',
   		message: `Enter the path(s) of a local mounted disk you would like to monitor.\n**Paths must be seperated by commas.`,
   		default: `/,/mnt/usb,/mnt/backup-drive`,
+		validate: function(value) {
+			/*
+			valid transform the data into an array with no white/blank spaces
+			1. '4 0' becomes: '40'
+			2 ' a' becomes: 'a' <---this will checked later.
+			*/
+			valid = value.split(',');
+			pc = (value.split(',')).length;
+			//Will be incremented to equal rc (relayCount)
+			progress = 0;
+			if (Array.isArray(valid)) {
+				verify();
+				if (progress == pc) {
+					return true;
+				}
+			}
+			return `\n**Please enter each path seperated by commas\n**Example: /,/mnt/usb,/mnt/backup-drive`;
+
+			function verify () {
+				valid.forEach((element) => {
+					if (element.length != 0 && !element.match(noBlanks) && element !== undefined) {
+						progress++;
+					}
+				});
+			}
+		},
 	},
 	{
 	  	type: 'number',
@@ -178,14 +233,12 @@ function stemQs (generalAnswers) {
 	];
 
 	inquirer.prompt(questions).then(answers => {
-		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
-		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-		if ((answers["relayCount"] > 0) || (answers["internalDS18B20TemperatureSensorCount"] > 0)) {
+		generalAnswers["stem"] = answers;
+		if ((generalAnswers["stem"]["relayCount"] > 0) || (generalAnswers["stem"]["internalDS18B20TemperatureSensorCount"] > 0)) {
 			console.log('\n**growBox-Stem Relay & Temperature Sensor Entry**');
-			relayAndSensorQs(answers);
+			relayAndSensorQs(generalAnswers);
 		} else {
-			console.log(answers);
-			return answers;
+			return generalAnswers;
 		}
 	})
 }
@@ -224,8 +277,8 @@ function branchQs (generalAnswers) {
 	];
 
 	inquirer.prompt(questions).then(answers => {
-		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
-		answers["temperatureScale"] = generalAnswers["temperatureScale"];
+		answers["system"]["sysType"] = (generalAnswers["system"]["sysType"]).toLowerCase();
+		answers["system"]["temperatureScale"] = generalAnswers["system"]["temperatureScale"];
 		return answers;
 	});
 }
@@ -261,10 +314,10 @@ function flowerQs (generalAnswers) {
 }
 
 function relayAndSensorQs (stemAnswers) {
-	stemAnswers["relayData"] = {};
-	stemAnswers["sensorData"] = {};
-	rc = stemAnswers["relayCount"];
-	isc = stemAnswers["internalDS18B20TemperatureSensorCount"];
+	stemAnswers["stem"]["relayData"] = {};
+	stemAnswers["stem"]["sensorData"] = {};
+	rc = stemAnswers["stem"]["relayCount"];
+	isc = stemAnswers["stem"]["internalDS18B20TemperatureSensorCount"];
 
 	rcExPin = [];
 	rcExDesc = [];
@@ -441,26 +494,25 @@ function relayAndSensorQs (stemAnswers) {
 			if (rc > 0) {
 				var i = 0;
 				answers.pin.split(',').forEach((element) => {
-					stemAnswers["relayData"][i+1] = {"pin": answers.pin.split(',')[i],"description": answers.relayDescription.split(',')[i]};
+					stemAnswers["stem"]["relayData"][i+1] = {"pin": answers.pin.split(',')[i],"description": answers.relayDescription.split(',')[i]};
 					i++;
 				});
 			}
 			if (isc > 0) {
 				var o = 0;
 				answers.internalDS18B20TemperatureID.split(',').forEach((element) => {
-					stemAnswers["sensorData"][o+1] = {"sensor": answers.internalDS18B20TemperatureID.split(',')[o],"sensorDescription": answers.sensorDescription.split(',')[o]};
+					stemAnswers["stem"]["sensorData"][o+1] = {"sensor": answers.internalDS18B20TemperatureID.split(',')[o],"sensorDescription": answers.sensorDescription.split(',')[o]};
 					o++;
 				});
 			}
-
-			console.log(JSON.stringify(stemAnswers));
-			return stemAnswers;
+			writeSettings(stemAnswers);
 		});
 	}
 }
 
-function writeSettings (completedAnswers,) {
-
+//This will contain the code to log or write(file/db) the collected answers.
+function writeSettings (completedAnswers) {
+	console.log(JSON.stringify(completedAnswers));
 }
 
 //Execute code
