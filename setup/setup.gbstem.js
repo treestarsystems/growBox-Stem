@@ -157,7 +157,7 @@ function stemQs (generalAnswers) {
   		name: 'relayCount',
 	  	message: `How many relays will be controlled?`,
 //		remove later
-  		default: '2',
+  		default: '0',
   		validate: function(value) {
 	     		var valid = !isNaN(parseFloat(value));
      			return valid || 'Please enter a number';
@@ -168,7 +168,7 @@ function stemQs (generalAnswers) {
   		type: 'number',
   		name: 'internalDS18B20TemperatureSensorCount',
 //		remove later
-  		default: '2',
+  		default: '1',
   		message: `How many internal DS18B20 sensors will be controlled?`,
   		validate: function(value) {
      			var valid = !isNaN(parseFloat(value));
@@ -268,6 +268,7 @@ function relayAndSensorQs (stemAnswers) {
 	stemAnswers["sensorData"] = {};
 	rc = stemAnswers["relayCount"];
 	isc = stemAnswers["internalDS18B20TemperatureSensorCount"];
+
 	rcExPin = [];
 	rcExDesc = [];
 
@@ -372,8 +373,8 @@ function relayAndSensorQs (stemAnswers) {
 				1. '4 0' becomes: '40'
 				2 ' a' becomes: 'a' <---this will checked later.
 				*/
-				valid = value.replace(/\s/g, "").split(',');
-				//Will be incremented to equal isc (relayCount)
+				valid = value.split(',');
+				//Will be incremented to equal isc (sensorCount)
 				progress = 0;
 				if (Array.isArray(valid)) {
 					if (valid.length == isc) {
@@ -387,12 +388,12 @@ function relayAndSensorQs (stemAnswers) {
 
 				/*
 				This was a bit annoying to figure out but this funtion runs through array to:
-				1. verify it is a number.
+				1. verify it is not empty.
 				2. increment progress counter to match the value of relays entered previously.
 				*/
 				function verify () {
 					valid.forEach((element) => {
-						if (!element.match(noBlanks)) {
+						if (element.length != 0 && !element.match(noBlanks) && element !== undefined) {
 							progress++;
 						}
 					});
@@ -424,12 +425,12 @@ function relayAndSensorQs (stemAnswers) {
 
 				/*
 				This was a bit annoying to figure out but this funtion runs through array to:
-				1. verify it is a number.
+				1. verify it is empty.
 				2. increment progress counter to match the value of relays entered previously.
 				*/
 				function verify () {
 					valid.forEach((element) => {
-						if (!element.match(noBlanks)) {
+						if (element.length != 0 && !element.match(noBlanks) && element !== undefined) {
 							progress++;
 						}
 					});
