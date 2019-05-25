@@ -113,7 +113,6 @@ function rootQs (generalAnswers) {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
 		return answers;
-//		console.log(answers);
 	});
 }
 
@@ -129,15 +128,13 @@ function stemQs (generalAnswers) {
 	{
   		type: 'input',
   		name: 'gbRootAddress',
-  		message: `growBox-Root IP Address?`,
-//		remove later
-  		default: '1.1.1.1',
+  		message: `growBox-Root IPv4/6 Address?`,
   		validate: function(value) {
    		var valid = value.match(ipExpression);
 			if (valid) {
 				return true;
 			}
-			return 'Please enter a valid IP Address';
+			return 'Please enter a valid IPv4/6 Address';
   		}
 	},
 	{
@@ -153,11 +150,15 @@ function stemQs (generalAnswers) {
   		default: `${core.genSpecial(45)}`,
 	},
 	{
+  		type: 'input',
+  		name: 'localDisks',
+  		message: `Enter the path(s) of a local mounted disk you would like to monitor.\n**Paths must be seperated by commas.`,
+  		default: `/,/mnt/usb,/mnt/backup-drive`,
+	},
+	{
 	  	type: 'number',
   		name: 'relayCount',
 	  	message: `How many relays will be controlled?`,
-//		remove later
-  		default: '0',
   		validate: function(value) {
 	     		var valid = !isNaN(parseFloat(value));
      			return valid || 'Please enter a number';
@@ -167,8 +168,6 @@ function stemQs (generalAnswers) {
 	{
   		type: 'number',
   		name: 'internalDS18B20TemperatureSensorCount',
-//		remove later
-  		default: '1',
   		message: `How many internal DS18B20 sensors will be controlled?`,
   		validate: function(value) {
      			var valid = !isNaN(parseFloat(value));
@@ -227,7 +226,6 @@ function branchQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-//		console.log(answers);
 		return answers;
 	});
 }
@@ -258,7 +256,6 @@ function flowerQs (generalAnswers) {
 	inquirer.prompt(questions).then(answers => {
 		answers["sysType"] = (generalAnswers["sysType"]).toLowerCase();
 		answers["temperatureScale"] = generalAnswers["temperatureScale"];
-//		console.log(answers);
 		return answers;
 	});
 }
