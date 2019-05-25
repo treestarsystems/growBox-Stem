@@ -234,11 +234,12 @@ function stemQs (generalAnswers) {
 
 	inquirer.prompt(questions).then(answers => {
 		generalAnswers["stem"] = answers;
+		generalAnswers["stem"]["localDisks"] = answers["localDisks"].split(',');
 		if ((generalAnswers["stem"]["relayCount"] > 0) || (generalAnswers["stem"]["internalDS18B20TemperatureSensorCount"] > 0)) {
 			console.log('\n**growBox-Stem Relay & Temperature Sensor Entry**');
 			relayAndSensorQs(generalAnswers);
 		} else {
-			return generalAnswers;
+			writeSettings(generalAnswers);
 		}
 	})
 }

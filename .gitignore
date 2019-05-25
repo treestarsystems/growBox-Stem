@@ -1,4 +1,4 @@
-/dbs/*
+server/dbs/*.db
 /trash
 *.swp
 *.save
