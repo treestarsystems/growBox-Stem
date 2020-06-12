@@ -119,7 +119,7 @@ function collectSystemStatusTasksScheduled(limit) {
 	var collectedDataRemoteTasksInfo = {};
 	var i = 0;
 	while (i < limit) {
-		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value","startTime": "1483228800","endTime": "1558404871000"};
+		collectedDataRemoteTasksInfo[i] = {"type": "value","status": "value","description": "value12345678901234567890","startTime": "1483228800","endTime": "1558404871000"};
 		i++;
 	}
 	return collectedDataRemoteTasksInfo;
@@ -208,26 +208,46 @@ async function displaySystemStatus() {
 	tty.write(`\n`);
 
 	tty.write(`\nCurrent Tasks:\n`);
+	tty.write(` Type:`);
+	tty.write(` | Status:`);
+	tty.write(` | Description:       `);
+	tty.write(` | Start:              -`);
+	tty.write(` End: `);
+	tty.write(`\n`);
+
 	for(key in display.tasksCurrent) {
 		var startTime = new Date(Number(display.tasksCurrent[key]["startTime"]));
 		var endTime = new Date(Number(display.tasksCurrent[key]["endTime"]));
+		tty.write(` ${display.tasksCurrent[key]["type"]}`);
+		tty.write(` | ${display.tasksCurrent[key]["status"]}  `);
+		tty.write(` | ${(display.tasksCurrent[key]["description"]).slice(0,19)}`);
+		tty.write(` | ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
+		tty.write(` ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
+/*
 		tty.write(` Type: ${display.tasksCurrent[key]["type"]}`);
 		tty.write(` | Status: ${display.tasksCurrent[key]["status"]}`);
 		tty.write(` | Description: ${(display.tasksCurrent[key]["description"]).slice(0,19)}`);
-		tty.write(` | Start: ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
+a		tty.write(` | Start: ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
 		tty.write(` End: ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
+*/
 		tty.write(`\n`);
 	}
 
 	tty.write(`\nScheduled Tasks:\n`);
+	tty.write(` Type:`);
+	tty.write(` | Status:`);
+	tty.write(` | Description:       `);
+	tty.write(` | Start:              -`);
+	tty.write(` End: `);
+	tty.write(`\n`);
 	for(key in display.tasksScheduled) {
 		var startTime = new Date(Number(display.tasksScheduled[key]["startTime"]));
 		var endTime = new Date(Number(display.tasksScheduled[key]["endTime"]));
-		tty.write(` Type: ${display.tasksScheduled[key]["type"]}`);
-		tty.write(` | Status: ${display.tasksScheduled[key]["status"]}`);
-		tty.write(` | Description: ${(display.tasksScheduled[key]["description"]).slice(0,19)}`);
-		tty.write(` | Start: ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
-		tty.write(` End: ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
+		tty.write(` ${display.tasksScheduled[key]["type"]}`);
+		tty.write(` | ${display.tasksScheduled[key]["status"]}  `);
+		tty.write(` | ${(display.tasksScheduled[key]["description"]).slice(0,19)}`);
+		tty.write(` | ${startTime.toLocaleDateString("en-US", timeOptionsTasks)} -`);
+		tty.write(` ${endTime.toLocaleDateString("en-US", timeOptionsTasks)}`);
 		tty.write(`\n`);
 	}
 
@@ -252,5 +272,5 @@ setInterval(function () {
 setInterval(function () {
 	tty.write('\033c');
 	displaySystemStatus();
-//}, 20000);
-}, 5000);
+}, 20000);
+//}, 10000);
