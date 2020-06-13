@@ -63,7 +63,3 @@ if (process.env.CORRECT_USER) {
   jobs[key].start();
  }
 }
-
-process.on('SIGINT', () => {
- process.exit(error ? 1 : 0);
-});

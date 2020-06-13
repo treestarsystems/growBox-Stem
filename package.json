@@ -1,6 +1,6 @@
 {
   "name": "growbox-stem",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Environmnetal (Stem) - Built to collect sensor data, distribute tasks, and present it to frontends.",
   "main": "server/index.js",
   "scripts": {
