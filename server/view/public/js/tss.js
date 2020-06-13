@@ -13,23 +13,47 @@ if (pathname == 'setup') {
  window.location = "/login";
 */
 
-//Used to simulate retrieval of config status of 'no'
- setTimeout(function(){
-  Swal.fire({
-   icon: 'info',
-   title: 'No Config Found!',
-   toast: true,
-   showConfirmButton: false,
-   position: 'top-end',
-   timerProgressBar: true,
-   timer: 2000
-  });
-  input.disabled = false;
-  //It seems you have to reverse the diable then enable it. Weird. Maybe research this.
-  applyButton.disabled = false;
-  applyButton.enabled = true;
-  applyButton.onclick = function (){applyConfig()};
- }, 3000);
+ let url = `/api/status/configured`;
+ var xhr = new XMLHttpRequest();
+ xhr.open('GET', url, true);
+ xhr.setRequestHeader("Content-Type", "application/json");
+ xhr.responseType = 'json';
+ xhr.send();
+ xhr.onload = function() {
+  let response = xhr.response;
+  if (response.message == "no") {
+   Swal.fire({
+    icon: 'info',
+    title: 'No Config Found!',
+    toast: true,
+    showConfirmButton: false,
+    position: 'top-end',
+    timerProgressBar: true,
+    timer: 2000
+   });
+   input.disabled = false;
+   //It seems you have to reverse the diable then enable it. Weird. Maybe research this.
+   applyButton.disabled = false;
+   applyButton.enabled = true;
+   applyButton.onclick = function (){applyConfig()};
+  }
+  if (response.message == "yes") {
+   Swal.fire({
+    icon: 'success',
+    title: 'Redirecting....',
+    toast: true,
+    showConfirmButton: false,
+    position: 'top-end',
+    timerProgressBar: true,
+    timer: 2000
+   });
+   setTimeout(function(){
+    console.log('Configuration exists. Redirecting.....')
+    document.title = "Redirecting.....";
+    window.location = "/login";
+   }, 2150);
+  }
+ }
 }
 
 function isJson(str) {
@@ -40,8 +64,6 @@ function isJson(str) {
  }
  return true;
 }
-
-
 
 function applyConfig () {
  //After XHR

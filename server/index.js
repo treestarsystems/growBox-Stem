@@ -34,6 +34,8 @@ app.use(cors());
 const gpio = require('./controller/api/routes/gpio');
 app.use('/api/gpio', gpio);
 */
+const status = require('./controller/api/routes/status');
+app.use('/api/status', status);
 
 //Pages
 const pages = require('./controller/pages/pages');
