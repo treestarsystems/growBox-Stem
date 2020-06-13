@@ -36,6 +36,8 @@ app.use('/api/gpio', gpio);
 */
 const status = require('./controller/api/routes/status');
 app.use('/api/status', status);
+const configure = require('./controller/api/routes/configure');
+app.use('/api/configure', configure);
 
 //Pages
 const pages = require('./controller/pages/pages');

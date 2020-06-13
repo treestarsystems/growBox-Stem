@@ -18,8 +18,9 @@ var coreVars = {
  "installedDir": path.join(__dirname, '../..'),
 }
 
-//Required directories
+//Required directories and file
 coreVars.systemConfsDir = `${coreVars.installedDir}/system_confs`;
+coreVars.systemConfig = `${coreVars.systemConfsDir}/system_conf.json`;
 coreVars.logStoreDir = `${coreVars.installedDir}/log_storage`;
 
 coreVars.instanceId = `${coreVars.logStorage}/pid/${coreVars.projectName}_Instance.id`;
@@ -35,17 +36,17 @@ function getUserInfo() {
 function temperatureConversion(temperature, scale) {
  //From millidegree Celsius to Celsius
  if (scale == 'c') {
-         return temperature/1000;
+  return temperature/1000;
  }
 
  //From millidegree Celsius to Fahrenheit
  if (scale == 'f') {
-         return ((temperature/1000)*9/5)+32;
+  return ((temperature/1000)*9/5)+32;
  }
 
  //From millidegree Celsius to Kelvin
  if (scale == 'k') {
-         return (temperature/1000)+273.15;
+  return (temperature/1000)+273.15;
  }
 }
 
@@ -122,6 +123,15 @@ function getRandomNumber(min, max) {
  return Math.round(Math.random() * (max - min) + min);
 }
 
+function isJson(str) {
+ try {
+  JSON.parse(str);
+ } catch (e) {
+  return false;
+ }
+ return true;
+}
+
 module.exports = {
  genRegular,
  genSpecial,
@@ -133,5 +143,6 @@ module.exports = {
  incorrectUser,
  coreVars,
  system,
+ isJson,
  temperatureConversion
 }

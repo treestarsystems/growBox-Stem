@@ -7,13 +7,9 @@ if (pathname == 'setup') {
  applyButton.onclick = null;
  input.disabled = true;
  applyButton.disabled = true;
-/*
- console.log('Redirecting.....')
- document.title = "Redirecting.....";
- window.location = "/login";
-*/
 
- let url = `/api/status/configured`;
+ //Check with backend if the device is configured.
+ let url = `/api/configure`;
  var xhr = new XMLHttpRequest();
  xhr.open('GET', url, true);
  xhr.setRequestHeader("Content-Type", "application/json");
@@ -24,7 +20,7 @@ if (pathname == 'setup') {
   if (response.message == "no") {
    Swal.fire({
     icon: 'info',
-    title: 'No Config Found!',
+    title: 'No Config Found! &#10068;',
     toast: true,
     showConfirmButton: false,
     position: 'top-end',
@@ -36,11 +32,10 @@ if (pathname == 'setup') {
    applyButton.disabled = false;
    applyButton.enabled = true;
    applyButton.onclick = function (){applyConfig()};
-  }
-  if (response.message == "yes") {
+  } else if (response.message == "yes") {
    Swal.fire({
     icon: 'success',
-    title: 'Redirecting....',
+    title: 'Redirecting....&#128175;',
     toast: true,
     showConfirmButton: false,
     position: 'top-end',
@@ -52,6 +47,21 @@ if (pathname == 'setup') {
     document.title = "Redirecting.....";
     window.location = "/login";
    }, 2150);
+  } else {
+   Swal.fire({
+    icon: 'error',
+    title: 'Invalid Response/Configuration &#129335;&#127998;',
+    toast: true,
+    showConfirmButton: false,
+    position: 'top-end',
+    timerProgressBar: true,
+    timer: 2000
+   });
+   input.disabled = false;
+   //It seems you have to reverse the diable then enable it. Weird. Maybe research this.
+   applyButton.disabled = false;
+   applyButton.enabled = true;
+   applyButton.onclick = function (){applyConfig()};
   }
  }
 }
@@ -70,7 +80,7 @@ function applyConfig () {
  if (isJson(input.value)) {
   Swal.fire({
    icon: 'success',
-   title: 'Config Applied!',
+   title: '&#128175; Config Applied!',
    toast: true,
    showConfirmButton: false,
    position: 'top-end',
