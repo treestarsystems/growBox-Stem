@@ -27,19 +27,23 @@ function instanceInfo (id,name,instance,environment) {
 
 if (argv.k) {
  let instanceId = require(`${core.coreVars.logStoreDir}/pid/${core.coreVars.projectName}_Kill.json`);
- childProcess.execSync(`pm2 stop ${instanceId.id}`);
+// childProcess.execSync(`pm2 stop ${instanceId.id}`);
+ childProcess.execSync(`pm2 stop all`);
 }
 if (argv.s) {
  let instanceId = require(`${core.coreVars.logStoreDir}/pid/${core.coreVars.projectName}_Kill.json`);
- childProcess.execSync(`pm2 status ${instanceId.id}`);
+// childProcess.execSync(`pm2 status ${instanceId.id}`);
+ childProcess.execSync(`pm2 status all`);
 }
 if (argv.d) {
  let instanceId = require(`${core.coreVars.logStoreDir}/pid/${core.coreVars.projectName}_Kill.json`);
- childProcess.execSync(`pm2 delete ${instanceId.id}`);
+// childProcess.execSync(`pm2 delete ${instanceId.id}`);
+ childProcess.execSync(`pm2 delete all`);
 }
 if (argv.r) {
  let instanceId = require(`${core.coreVars.logStoreDir}/pid/${core.coreVars.projectName}_Kill.json`);
- childProcess.execSync(`pm2 restart ${instanceId.id}`);
+// childProcess.execSync(`pm2 restart ${instanceId.id}`);
+ childProcess.execSync(`pm2 restart all`);
 }
 
 module.exports = {

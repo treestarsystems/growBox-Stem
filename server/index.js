@@ -38,6 +38,8 @@ const status = require('./controller/api/routes/status');
 app.use('/api/status', status);
 const configure = require('./controller/api/routes/configure');
 app.use('/api/configure', configure);
+const auth = require('./controller/api/routes/auth');
+app.use('/api/auth', auth);
 
 //Pages
 const pages = require('./controller/pages/pages');
