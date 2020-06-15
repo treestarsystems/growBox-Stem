@@ -1,4 +1,3 @@
-
 var previousPage = document.referrer.split('/')[3]; //Yes it is static but it is good for now.
 var pathname = window.location.pathname.slice(1);
 var applyButton = document.getElementById('applyButton');
@@ -39,7 +38,7 @@ if (pathname == 'setup') {
   } else if (response.message == "yes") {
    Swal.fire({
     icon: 'success',
-    title: '&#128175; Redirecting....',
+    title: 'Redirecting....&#128175;',
     toast: true,
     showConfirmButton: false,
     position: 'top-end',
@@ -52,15 +51,18 @@ if (pathname == 'setup') {
     window.location = "/login";
    }, 2150);
   } else {
-   Swal.fire({
-    icon: 'error',
-    title: '&#129335;&#127998; Invalid Response/Configuration',
-    toast: true,
-    showConfirmButton: false,
-    position: 'top-end',
-    timerProgressBar: true,
-    timer: 2000
-   });
+   console.log(response.message);
+   if (previousPage != 'login') {
+    Swal.fire({
+     icon: 'error',
+     title: 'Invalid Response/Configuration &#129335;&#127998;',
+     toast: true,
+     showConfirmButton: false,
+     position: 'top-end',
+     timerProgressBar: true,
+     timer: 2000
+    });
+   }
    input.disabled = false;
    //It seems you have to reverse the diable then enable it. Weird. Maybe research this.
    applyButton.disabled = false;
@@ -97,15 +99,21 @@ if (pathname == 'login') {
   } else if (response.message == "yes") {
    console.log('A configuration exists.')
   } else {
+   console.log(response.message);
    Swal.fire({
     icon: 'error',
-    title: '&#129335;&#127998; Invalid Response/Configuration',
+    title: 'Invalid Response/Configuration &#129335;&#127998;',
     toast: true,
     showConfirmButton: false,
     position: 'top-end',
     timerProgressBar: true,
     timer: 2000
    });
+   setTimeout(function(){
+    console.log('Invalid Response/Configuration. Redirecting.....')
+    document.title = "Redirecting.....";
+    window.location = "/setup";
+   }, 2150);
   }
  }
 }
@@ -120,7 +128,7 @@ function isJson(str) {
 }
 
 function applyConfig () {
- if (isJson(input.value)) {
+ if (isJson(input.value) && input.value != '{}') {
   let url = `/api/configure`;
   var xhr = new XMLHttpRequest();
   xhr.open('POST', url, true);
@@ -128,11 +136,11 @@ function applyConfig () {
   xhr.responseType = 'json';
   xhr.send(input.value);
   xhr.onload = function() {
-   let response = xhr.response;
+   var response = xhr.response;
    if (response.message == 'yes') {
     Swal.fire({
      icon: 'success',
-     title: '&#128175; Config Applied!',
+     title: 'Config Applied! &#128175;',
      toast: true,
      showConfirmButton: false,
      position: 'top-end',
@@ -147,13 +155,18 @@ function applyConfig () {
    } else {
     Swal.fire({
      icon: 'error',
-     title: '&#10060; Error Writing Config!',
+     title: `${response.message} `,
      toast: true,
      showConfirmButton: false,
      position: 'top-end',
      timerProgressBar: true,
      timer: 2000
     });
+    setTimeout(function(){
+     console.log('Redirecting.....')
+     document.title = "Redirecting.....";
+     window.location = response.link;
+    }, 2150);
    }
   }
  } else {

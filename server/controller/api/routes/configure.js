@@ -12,8 +12,8 @@ router.get('/', async (req,res) =>{
     "message":"no"
    }).status(200);
   } else {
-   //Check if file is valid JSON
-   if (data != '' && core.isJson(data)) {
+   //Check if file is valid JSON and not an empty object
+   if (data != '' && core.isJson(data) && data != JSON.stringify({}) ) {
     res.send({
      "status":"success",
      "message":"yes"
@@ -21,7 +21,7 @@ router.get('/', async (req,res) =>{
    } else {
     res.send({
      "status":"success",
-     "message":"invalid"
+     "message":"Invalid config. Please make correction(s)"
     }).status(200);
    }
   }
@@ -31,24 +31,77 @@ router.get('/', async (req,res) =>{
 //Write file then check it on close then res.send based on if file exists.
 router.post('/', async (req,res) =>{
  let config = JSON.stringify(req.body);
- let configStream = fs.createWriteStream(core.coreVars.systemConfig,{encoding: 'utf8',mode: 0o600});
- configStream.write(config)
- //Check if config file exists then send response.
- configStream.close(() => {
+ if (!req.headers.referer) return res.send({"status": "failure","message":"No referer defined"})
+ let referer = req.headers.referer.split('/');
+ if (referer[referer.length-1] == 'setup' ) {
+  //Check if file exists
   fs.access(core.coreVars.systemConfig, fs.constants.R_OK, (err) => {
    if (err) {
     res.send({
      "status": "failure",
-     "message":"no"
+     "message":"Unable to read file."
     }).status(200);
    } else {
-    res.send({
-     "status": "success",
-     "message":"yes"
-    }).status(200);
+    //If it exists, check that it is valid JSON and not an empty object
+    fs.readFile(core.coreVars.systemConfig, 'utf8', (err, data) => {
+     if (err) {
+      res.send({
+       "status": "failure",
+       "message":"Unable to read file."
+      }).status(200);
+     }
+     //Check validity or data
+     if (data == '' || !core.isJson(data) || data == JSON.stringify({}) ) {
+      //If in valid then send them write data.
+      writeConfig(config,res);
+      res.send({
+       "status": "success",
+       "message":"yes",
+       "link": "/login"
+      }).status(200);
+     } else {
+      //If valid then send them to login.
+      res.send({
+       "status": "success",
+       "message":"yes",
+       "link": "/login"
+      }).status(200);
+     }
+    });
    }
   });
- });
+ } else if (referer[referer.length-1] == 'configure') {
+  //This needs to be an authenticated endpoint. Maybe defined in the config file or using a authentication framework.
+  writeConfig(config,res);
+ } else {
+  //If the endpoint is not defined.
+  res.send({
+   "status": "failure",
+   "message":"You're coming at me wrong!",
+   "link": "/login"
+  }).status(200);
+ }
+
+ function writeConfig(configData,callback) {
+  let configStream = fs.createWriteStream(core.coreVars.systemConfig,{encoding: 'utf8',mode: 0o600});
+  configStream.write(configData)
+  //Check if config file exists then send response.
+  configStream.close(() => {
+   fs.access(core.coreVars.systemConfig, fs.constants.R_OK, (err) => {
+    if (err) {
+     callback.send({
+      "status": "failure",
+      "message":"no"
+     }).status(200);
+    } else {
+     callback.send({
+      "status": "success",
+      "message":"yes"
+     }).status(200);
+    }
+   });
+  });
+ }
 });
 
 module.exports = router;
