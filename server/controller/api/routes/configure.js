@@ -28,46 +28,25 @@ router.get('/', async (req,res) =>{
  });
 });
 
-//Write file then check it on close then res.send based on if file exists.
 router.post('/', async (req,res) =>{
- let config = JSON.stringify(req.body);
+ let config = JSON.stringify(req.body, null, 2);
  if (!req.headers.referer) return res.send({"status": "failure","message":"No referer defined"})
  let referer = req.headers.referer.split('/');
  if (referer[referer.length-1] == 'setup' ) {
-  //Check if file exists
-  fs.access(core.coreVars.systemConfig, fs.constants.R_OK, (err) => {
+  //If it exists, check that it is valid JSON and not an empty object
+  fs.readFile(core.coreVars.systemConfig, 'utf8', (err, data) => {
    if (err) {
-    res.send({
-     "status": "failure",
-     "message":"Unable to read file."
-    }).status(200);
+    writeConfig(config,res);
+   } else if (data == '' || !core.isJson(data) || data == JSON.stringify({}) ) {
+    //If in valid then send them write data.
+    writeConfig(config,res);
    } else {
-    //If it exists, check that it is valid JSON and not an empty object
-    fs.readFile(core.coreVars.systemConfig, 'utf8', (err, data) => {
-     if (err) {
-      res.send({
-       "status": "failure",
-       "message":"Unable to read file."
-      }).status(200);
-     }
-     //Check validity or data
-     if (data == '' || !core.isJson(data) || data == JSON.stringify({}) ) {
-      //If in valid then send them write data.
-      writeConfig(config,res);
-      res.send({
-       "status": "success",
-       "message":"yes",
-       "link": "/login"
-      }).status(200);
-     } else {
-      //If valid then send them to login.
-      res.send({
-       "status": "success",
-       "message":"yes",
-       "link": "/login"
-      }).status(200);
-     }
-    });
+    //If valid then send them to login.
+    res.send({
+     "status": "success",
+     "message":"yes",
+     "link": "/login"
+    }).status(200);
    }
   });
  } else if (referer[referer.length-1] == 'configure') {
@@ -82,6 +61,7 @@ router.post('/', async (req,res) =>{
   }).status(200);
  }
 
+ //Write file then check it on close then res.send based on if file exists.
  function writeConfig(configData,callback) {
   let configStream = fs.createWriteStream(core.coreVars.systemConfig,{encoding: 'utf8',mode: 0o600});
   configStream.write(configData)
@@ -91,12 +71,14 @@ router.post('/', async (req,res) =>{
     if (err) {
      callback.send({
       "status": "failure",
-      "message":"no"
+      "message":"Write Error. File does not exist.",
+      "link": "/setup"
      }).status(200);
     } else {
      callback.send({
       "status": "success",
-      "message":"yes"
+      "message":"yes",
+      "link": "/login"
      }).status(200);
     }
    });

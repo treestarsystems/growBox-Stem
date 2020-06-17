@@ -140,9 +140,9 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,500,400i,600,600i,700,700i,800,800i");
 @import url("https://fonts.googleapis.com/css?family=Muli:300,400,400i,600,700,800,900");
 /*--------- MDI Icons -----------*/
-@import url(../vendor/mdi-icon/css/materialdesignicons.min.css);
+@import url(../vendor/mdi-icon/css/materialdesignicons.min.css); 
 /*--------- Bootstrap -----------*/
-@import url(../vendor/bootstrap/dist/css/bootstrap.min.css);
+@import url(bootstrap.min.css);
 /*---------- App styles -----------*/
 /*------ convert font px to rem ------*/
 /*------ calculate width ------*/

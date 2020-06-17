@@ -165,7 +165,7 @@ function applyConfig () {
     setTimeout(function(){
      console.log('Redirecting.....')
      document.title = "Redirecting.....";
-     window.location = response.link;
+     window.location = response.link || "/status";
     }, 2150);
    }
   }

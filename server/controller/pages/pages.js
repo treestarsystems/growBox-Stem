@@ -3,7 +3,7 @@ const router = express.Router();
 const core = require('../../modules/core.js');
 
 router.get('/', (req, res) => {
- res.render('status', {title: 'Status', layout: 'login'});
+ res.render('status', {title: 'Status', layout: 'status'});
 });
 
 router.get('/login', (req, res) => {
