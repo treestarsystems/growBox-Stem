@@ -18,26 +18,26 @@ const intakeValve = new Gpio(5, 'out');
 
 //If relay is ON/Closed then turn it OFF/Open.
 function closeValve() {
-	if (intakeValve.readSync() == 0) {
-		intakeValve.writeSync(1);
-	}
+ if (intakeValve.readSync() == 0) {
+  intakeValve.writeSync(1);
+ }
 }
 
 function monitorWaterLevel() {
-	/*
-	During testing the Ball Float used outputs 1s when at its lowest point
-	(away from wires). This is away from the top or fill line thus the 
-	relay the valve	is connected to should be opened (0|Low).
-	*/
+ /*
+ During testing the Ball Float used outputs 1s when at its lowest point
+ (away from wires). This is away from the top or fill line thus the 
+ relay the valve	is connected to should be opened (0|Low).
+ */
 
-	//Water High, Close Valve.
-	if (topFloat.readSync() == 0) {
-		intakeValve.writeSync(1);
-	}
-	//Water Low, Open Valve.
-	if (bottomFloat.readSync() == 0 || topFloat.readSync() == 1) {
-		intakeValve.writeSync(0);
-	}
+ //Water High, Close Valve.
+ if (topFloat.readSync() == 0) {
+  intakeValve.writeSync(1);
+ }
+ //Water Low, Open Valve.
+ if (bottomFloat.readSync() == 0 || topFloat.readSync() == 1) {
+  intakeValve.writeSync(0);
+ }
 }
 
 //Run the code above
@@ -49,7 +49,7 @@ setTimeout(monitorWaterLevel, 6000);
 setInterval(monitorWaterLevel, 500);
 
 process.on('SIGINT', () => {
-  intakeValve.unexport();
-  topFloat.unexport();
-  bottomFloat.unexport();
+ intakeValve.unexport();
+ topFloat.unexport();
+ bottomFloat.unexport();
 });
