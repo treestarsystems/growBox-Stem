@@ -12,38 +12,40 @@ const Gpio = require('onoff').Gpio;
 //Please enter a valid Task - on|off
 function relayControl (pin, task) {
  var invalidGpio = {
-  "status": {
-   "code": "500",
-   "codeType": "error",
-   "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"
-  }
+  "status": "failure",
+  "message": "Please enter a valid GPIO pin number - <GPIO.BMC> number"
  };
  var invalidTask = {
-  "status": {
-   "code": "500",
-   "codeType": "error",
-   "message": "Please enter a valid Task - on|off"
-  }
+  "status": "failure",
+  "message": "Please enter a valid Task - on|off"
  };
  var validRequest = {
-  "status": {
-   "code": "200",
-   "codeType": "success",
-   "message": "Completed"
-  }
+  "status": "success",
+  "message": "Completed"
  };
+ var executionError = {
+  "status": "failure",
+  "message": "Execution Error. Unable to complete task."
+ };
+
  if ((Number.isInteger(pin)) && (pin)) {
-  if (((task == 'on') || (task == 'off')) && (task)) {
+  if ((task) && (task.match(/^on$|^off$/g))) {
    const relay = new Gpio(pin, 'out');
    if (task == 'on') {
-    relay.writeSync(0);
+    relay.write(0,err => {
+     if (err) {
+      return executionError;
+     }
+    });
     return validRequest;
    } else if (task == 'off') {
-    relay.writeSync(1);
-    relay.unexport();
+    relay.write(1,err => {
+     if (err) {
+      return executionError;
+     }
+     relay.unexport();
+    });
     return validRequest;
-   } else {
-    relay.unexport();
    }
   } else {
    return invalidTask;

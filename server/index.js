@@ -29,11 +29,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(cors());
 
-/*
 //API Endpoints
 const gpio = require('./controller/api/routes/gpio');
 app.use('/api/gpio', gpio);
-*/
 const status = require('./controller/api/routes/status');
 app.use('/api/status', status);
 const configure = require('./controller/api/routes/configure');
