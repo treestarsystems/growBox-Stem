@@ -24,7 +24,7 @@ function processData(sensorID, data) {
  var sensorTemperatureReadingParsed = {
   [sensorID]: {
    "reading": {
-    "raw": sensorTemperatureReadingRaw,
+    "raw": Number(sensorTemperatureReadingRaw),
     "c": core.temperatureConversion(sensorTemperatureReadingRaw, 'c'),
     "f": core.temperatureConversion(sensorTemperatureReadingRaw, 'f'),
     "k": core.temperatureConversion(sensorTemperatureReadingRaw, 'k')
