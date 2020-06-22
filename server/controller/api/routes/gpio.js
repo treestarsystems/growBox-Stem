@@ -27,18 +27,21 @@ router.post('/sensor', async (req,res) => {
  let obj = req.body
  if (obj.key == 'test') {
   if (obj.task == 'all') {
-//   res.send(await sensor.readSensorAllDS18B20());
-   await sensor.readSensorAllDS18B20(res,true);
+   await sensor.readSensorAllDS18B20(cb);
+  } else if (obj.task == 'list') {
+   await sensor.readSensorAllDS18B20(cb,true);
   } else {
-   let result = await sensor.readSensorSingleDS18B20(obj.sensorID)
-   res.send(result);
-//   res.send(await sensor.readSensorSingleDS18B20('28-011830a39bff'));
+   await sensor.readSensorSingleDS18B20(cb,obj.sensorID)
   }
  } else {
   res.send({
    "status":"failure",
    "message":"Invalid key"
   });
+ }
+ //Simplified callback wrapper to extract data async function
+ function cb (d) {
+  res.send(d)
  }
 });
 

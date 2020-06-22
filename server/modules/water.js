@@ -17,7 +17,8 @@ var now = 0;
 var interval = 60;
 var minute = 0;
 
-function monitorWaterFlow(pin, cli, file) {
+//function monitorWaterFlow(pin, cli, file) {
+function monitorWaterFlow(pin, output, destination) {
  const flowSensor = new Gpio(pin, 'in', 'falling');
  flowSensor.watch((err, value) => {
   if (err) {throw err;}
@@ -32,13 +33,16 @@ function monitorWaterFlow(pin, cli, file) {
    "totalCount": totalCount,
    "flowRate": ((rateCount * constant)/interval).toFixed(2), "time": minute
   };
-  if (cli == 1) {
+  if (output == 'cli') {
    console.log(reading);
   }
-  if (file) {
+  if (output == 'file') {
    let data = JSON.stringify(reading,null);
    //Write to file or data base in this case.
-   fs.writeFileSync(file, data);
+   fs.writeFileSync(destination, data);
+  }
+  if (output == 'api') {
+   //Axios send to root server(s) defined by destination.
   }
  });
  //Reset rateCount and increment minute every 60 seconds
@@ -47,6 +51,8 @@ function monitorWaterFlow(pin, cli, file) {
   rateCount = 0;
  }, 60000);
 }
+
+monitorWaterFlow(18,'cli')
 
 module.exports = {
  monitorWaterFlow
