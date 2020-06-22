@@ -29,7 +29,7 @@ router.get('/', async (req,res) =>{
 });
 
 router.post('/', async (req,res) =>{
- let config = JSON.stringify(req.body, null, 2);
+ let config = req.body;
  if (!req.headers.referer) return res.send({"status": "failure","message":"No referer defined"})
  let referer = req.headers.referer.split('/');
  if (referer[referer.length-1] == 'setup' ) {
@@ -42,29 +42,33 @@ router.post('/', async (req,res) =>{
     writeConfig(config,res);
    } else {
     //If valid then send them to login.
-    res.send({
-     "status": "success",
-     "message":"yes",
-     "link": "/login"
-    }).status(200);
+    let currentInterfacePassword = config.currentInterfacePassword;
+    let interfacePassword = JSON.parse(data).interfacePassword
+    if (currentInterfacePassword == interfacePassword) {
+     delete config.currentInterfacePassword;
+     writeConfig(config,res);
+    } else {
+     res.send({
+      "status": "failure",
+      "message":"Invalid password.",
+      "link": "/"
+     }).status(200);
+    }
    }
   });
- } else if (referer[referer.length-1] == 'configure') {
-  //This needs to be an authenticated endpoint. Maybe defined in the config file or using a authentication framework.
-  writeConfig(config,res);
  } else {
   //If the endpoint is not defined.
   res.send({
    "status": "failure",
    "message":"You're coming at me wrong!",
-   "link": "/login"
+   "link": "/"
   }).status(200);
  }
 
  //Write file then check it on close then res.send based on if file exists.
  function writeConfig(configData,callback) {
   let configStream = fs.createWriteStream(core.coreVars.systemConfig,{encoding: 'utf8',mode: 0o600});
-  configStream.write(configData)
+  configStream.write(JSON.stringify(configData, null, 2))
   //Check if config file exists then send response.
   configStream.close(() => {
    fs.access(core.coreVars.systemConfig, fs.constants.R_OK, (err) => {

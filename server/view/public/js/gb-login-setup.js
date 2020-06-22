@@ -2,6 +2,7 @@ var previousPage = document.referrer.split('/')[3]; //Yes it is static but it is
 var pathname = window.location.pathname.slice(1);
 var applyButton = document.getElementById('applyButton');
 var input = document.getElementById('configInput');
+var currentInterfacePassword = '';
 
 if (pathname == 'setup') {
  //Disable apply button until back-end returns result.
@@ -36,20 +37,7 @@ if (pathname == 'setup') {
    applyButton.enabled = true;
    applyButton.onclick = function (){applyConfig()};
   } else if (response.message == "yes") {
-   Swal.fire({
-    icon: 'success',
-    title: 'Redirecting....&#128175;',
-    toast: true,
-    showConfirmButton: false,
-    position: 'top-end',
-    timerProgressBar: true,
-    timer: 2000
-   });
-   setTimeout(function(){
-    console.log('Configuration exists. Redirecting.....')
-    document.title = "Redirecting.....";
-    window.location = "/login";
-   }, 2150);
+   unlock();
   } else {
    console.log(response.message);
    if (previousPage != 'login') {
@@ -72,52 +60,6 @@ if (pathname == 'setup') {
  }
 }
 
-if (pathname == 'login') {
- let url = `/api/configure`;
- var xhr = new XMLHttpRequest();
- xhr.open('GET', url, true);
- xhr.setRequestHeader("Content-Type", "application/json");
- xhr.responseType = 'json';
- xhr.send();
- xhr.onload = function() {
-  let response = xhr.response;
-  if (response.message == "no") {
-   Swal.fire({
-    icon: 'info',
-    title: 'No Config Found! Redirecting...&#10068;',
-    toast: true,
-    showConfirmButton: false,
-    position: 'top-end',
-    timerProgressBar: true,
-    timer: 2000
-   });
-   setTimeout(function(){
-    console.log('No configuration exists. Redirecting.....')
-    document.title = "Redirecting.....";
-    window.location = "/setup";
-   }, 2150);
-  } else if (response.message == "yes") {
-   console.log('A configuration exists.')
-  } else {
-   console.log(response.message);
-   Swal.fire({
-    icon: 'error',
-    title: 'Invalid Response/Configuration &#129335;&#127998;',
-    toast: true,
-    showConfirmButton: false,
-    position: 'top-end',
-    timerProgressBar: true,
-    timer: 2000
-   });
-   setTimeout(function(){
-    console.log('Invalid Response/Configuration. Redirecting.....')
-    document.title = "Redirecting.....";
-    window.location = "/setup";
-   }, 2150);
-  }
- }
-}
-
 function isJson(str) {
  try {
   JSON.parse(str);
@@ -128,13 +70,16 @@ function isJson(str) {
 }
 
 function applyConfig () {
+ let config = JSON.parse(input.value);
+ delete config.message;
+ config['currentInterfacePassword'] = currentInterfacePassword;
  if (isJson(input.value) && input.value != '{}') {
   let url = `/api/configure`;
   var xhr = new XMLHttpRequest();
   xhr.open('POST', url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.responseType = 'json';
-  xhr.send(input.value);
+  xhr.send(JSON.stringify(config));
   xhr.onload = function() {
    var response = xhr.response;
    if (response.message == 'yes') {
@@ -150,7 +95,7 @@ function applyConfig () {
     setTimeout(function(){
      console.log('Redirecting.....')
      document.title = "Redirecting.....";
-     window.location = "/login";
+     window.location = "/";
     }, 2150);
    } else {
     Swal.fire({
@@ -165,7 +110,7 @@ function applyConfig () {
     setTimeout(function(){
      console.log('Redirecting.....')
      document.title = "Redirecting.....";
-     window.location = response.link || "/status";
+     window.location = response.link || "/";
     }, 2150);
    }
   }
@@ -179,5 +124,48 @@ function applyConfig () {
    timerProgressBar: true,
    timer: 2000
   });
+ }
+}
+
+function unlock () {
+ Swal.fire({
+  title: 'Config Password?',
+  input: 'password',
+  allowOutsideClick: false,
+  preConfirm: (password) => {
+   currentInterfacePassword = password;
+   checkAuth(password);
+  }
+ });
+}
+
+function checkAuth (password) {
+ let request = JSON.stringify({"password": password});
+ let url = `/api/auth`;
+ var xhr = new XMLHttpRequest();
+ xhr.open('POST', url, true);
+ xhr.setRequestHeader("Content-Type", "application/json");
+ xhr.responseType = 'json';
+ xhr.send(request);
+ xhr.onload = function() {
+  var response = xhr.response;
+  if (response.message == 'yes') {
+   Swal.fire({
+    icon: 'success',
+    title: 'Config Unlocked! &#128275;',
+    toast: true,
+    showConfirmButton: false,
+    position: 'top-end',
+    timerProgressBar: true,
+    timer: 2000
+   });
+   input.disabled = false;
+   //It seems you have to reverse the diable then enable it. Weird. Maybe research this.
+   applyButton.disabled = false;
+   applyButton.enabled = true;
+   applyButton.onclick = function (){applyConfig()};
+  } else {
+   location.reload();
+  }
  }
 }
